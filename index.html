@@ -47,6 +47,7 @@
       background: #fff;
       color: #0078ff;
       font-weight: bold;
+      cursor: pointer;
     }
     #result {
       margin-top: 20px;
@@ -63,7 +64,7 @@
 
   <script>
     const words = {
-      // Film-making p.8
+      // --- Film-making ---
       "wybierać plener": "choose a location",
       "reżyserować film": "direct a film",
       "podążać za fabułą": "follow the plot",
@@ -77,7 +78,7 @@
       "pójść świetnie": "smashed it",
       "Żartujesz, prawda?": "You’re kidding, right?",
 
-      // Blogging p.11
+      // --- Blogging ---
       "być oryginalnym": "be original",
       "wpaść na nowe pomysły": "come up with new ideas",
       "nawiązać kontakt ze swoimi odbiorcami": "connect with your audience",
@@ -86,7 +87,7 @@
       "przejść do rzeczy": "get to the point",
       "używać wyobraźni": "use your imagination",
 
-      // Successful writing p.12
+      // --- Successful writing ---
       "bloger": "blogger",
       "rozdział": "chapter",
       "okładka": "cover",
@@ -108,7 +109,7 @@
       "autor piosenek": "songwriter",
       "thriller": "thriller",
 
-      // Smartphone films p.14
+      // --- Smartphone films ---
       "animacja": "animation",
       "kopia zapasowa": "backup",
       "umiejący obsługiwać komputer": "computer literate",
@@ -119,26 +120,26 @@
       "oprogramowanie": "software",
       "efekty dźwiękowe": "sound effects",
 
-      // Participation in culture; Creators and their works of art p.20
-      "adaptować, ekranizować": "adapt a book",
+      // --- Participation in culture ---
+      "zaadaptować książkę": "adapt a book",
       "oklaskiwać występ": "applaud a performance",
       "wziąć udział w przesłuchaniu": "attend an audition",
       "wziąć udział w prapremierze": "attend a preview",
       "komponować muzykę": "compose music",
-      "przeprowadzać analizę krytyczną filmu": "critique a film",
+      "przeprowadzać analizę filmu": "critique a film",
       "występować w musicalu": "perform in a musical",
       "promować film": "promote a film",
-      "kamerzysta, kamerzystka": "cameraman/camerawoman",
+      "kamerzysta / kamerzystka": "cameraman/camerawoman",
       "obsada": "cast",
       "krytyk": "critic",
       "gatunek": "genre",
       "ilustrator": "illustrator",
       "scenarzysta": "screenwriter",
-      "sequel": "sequel",
-      "gwiazda, popularna osoba": "star",
-      "kaskader, kaskaderka": "stuntman/stuntwoman",
+      "kontynuacja": "sequel",
+      "gwiazda": "star",
+      "kaskader / kaskaderka": "stuntman/stuntwoman",
 
-      // Media; Traditions and culture p.136
+      // --- Media, traditions and culture ---
       "ogłoszenie": "announcement",
       "bieżące wydarzenia": "current events",
       "gość": "guest",
@@ -153,4 +154,37 @@
       "odległa przeszłość": "distant past",
       "oczekiwania": "expectations",
       "tradycja rodzinna": "family tradition",
-      "odziedziczony,
+      "odziedziczony": "inherited",
+      "nostalgiczny": "nostalgic",
+      "przekazać dalej": "pass on",
+      "prześledzić moje drzewo genealogiczne": "trace my family tree",
+      "wychowanie": "upbringing",
+      "wartości": "values"
+    };
+
+    const polishWords = Object.keys(words);
+    let currentWord = "";
+
+    function newWord() {
+      const randomIndex = Math.floor(Math.random() * polishWords.length);
+      currentWord = polishWords[randomIndex];
+      document.getElementById("word").textContent = currentWord;
+      document.getElementById("answer").value = "";
+      document.getElementById("result").textContent = "";
+    }
+
+    function checkAnswer() {
+      const userAnswer = document.getElementById("answer").value.trim().toLowerCase();
+      const correctAnswer = words[currentWord].toLowerCase();
+      if (userAnswer === correctAnswer) {
+        document.getElementById("result").textContent = "✅ Dobrze!";
+      } else {
+        document.getElementById("result").textContent = "❌ Źle! Poprawna odpowiedź: " + words[currentWord];
+      }
+      setTimeout(newWord, 2000);
+    }
+
+    newWord();
+  </script>
+</body>
+</html>
