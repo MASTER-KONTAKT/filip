@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test słówek - English Practice</title>
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background: linear-gradient(135deg, #4facfe, #00f2fe);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+    }
+    h1 {
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+    }
+    #word {
+      font-size: 1.4rem;
+      margin: 20px 0;
+      background: rgba(255,255,255,0.1);
+      padding: 10px 20px;
+      border-radius: 12px;
+    }
+    input {
+      font-size: 1rem;
+      padding: 10px;
+      width: 80%;
+      border: none;
+      border-radius: 8px;
+      outline: none;
+      text-align: center;
+    }
+    button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 10px;
+      background: #fff;
+      color: #0078ff;
+      font-weight: bold;
+    }
+    #result {
+      margin-top: 20px;
+      font-size: 1.2rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>Test z angielskich słówek</h1>
+  <div id="word"></div>
+  <input type="text" id="answer" placeholder="Wpisz odpowiednik po angielsku">
+  <button onclick="checkAnswer()">Sprawdź</button>
+  <div id="result"></div>
+
+  <script>
+    const words = {
+      // Film-making p.8
+      "wybierać plener": "choose a location",
+      "reżyserować film": "direct a film",
+      "podążać za fabułą": "follow the plot",
+      "grać rolę": "play a part",
+      "przećwiczyć swoje kwestie": "rehearse your lines",
+      "powiedzieć kwestię": "say a line",
+      "korzystać z efektów specjalnych": "use special effects",
+      "pisać scenariusz": "write the script",
+      "spróbować": "give it a shot",
+      "nie ryzykować": "playing it safe",
+      "pójść świetnie": "smashed it",
+      "Żartujesz, prawda?": "You’re kidding, right?",
+
+      // Blogging p.11
+      "być oryginalnym": "be original",
+      "wpaść na nowe pomysły": "come up with new ideas",
+      "nawiązać kontakt ze swoimi odbiorcami": "connect with your audience",
+      "tworzyć treści": "create content",
+      "skupiać się na pozytywach": "focus on the positives",
+      "przejść do rzeczy": "get to the point",
+      "używać wyobraźni": "use your imagination",
+
+      // Successful writing p.12
+      "bloger": "blogger",
+      "rozdział": "chapter",
+      "okładka": "cover",
+      "redagować": "edit",
+      "redaktor": "editor",
+      "bajka, baśń": "fairy tale",
+      "horror": "horror",
+      "dziennik": "journal",
+      "powieść kryminalna": "mystery novel",
+      "literatura faktu": "non-fiction",
+      "poeta": "poet",
+      "poezja": "poetry",
+      "publikować": "post",
+      "wydawać": "publish",
+      "wydawca": "publisher",
+      "powieść romansowa": "romantic novel",
+      "powieść fantastycznonaukowa": "science fiction novel",
+      "opowiadanie": "short story",
+      "autor piosenek": "songwriter",
+      "thriller": "thriller",
+
+      // Smartphone films p.14
+      "animacja": "animation",
+      "kopia zapasowa": "backup",
+      "umiejący obsługiwać komputer": "computer literate",
+      "dysk zewnętrzny": "external storage device",
+      "urządzenie podręczne": "handheld device",
+      "programowanie": "programming",
+      "smartfon": "smartphone",
+      "oprogramowanie": "software",
+      "efekty dźwiękowe": "sound effects",
+
+      // Participation in culture; Creators and their works of art p.20
+      "adaptować, ekranizować": "adapt a book",
+      "oklaskiwać występ": "applaud a performance",
+      "wziąć udział w przesłuchaniu": "attend an audition",
+      "wziąć udział w prapremierze": "attend a preview",
+      "komponować muzykę": "compose music",
+      "przeprowadzać analizę krytyczną filmu": "critique a film",
+      "występować w musicalu": "perform in a musical",
+      "promować film": "promote a film",
+      "kamerzysta, kamerzystka": "cameraman/camerawoman",
+      "obsada": "cast",
+      "krytyk": "critic",
+      "gatunek": "genre",
+      "ilustrator": "illustrator",
+      "scenarzysta": "screenwriter",
+      "sequel": "sequel",
+      "gwiazda, popularna osoba": "star",
+      "kaskader, kaskaderka": "stuntman/stuntwoman",
+
+      // Media; Traditions and culture p.136
+      "ogłoszenie": "announcement",
+      "bieżące wydarzenia": "current events",
+      "gość": "guest",
+      "błyskawiczna wiadomość": "instant message",
+      "konferencja prasowa": "news conference",
+      "podcast": "podcast",
+      "wykupić abonament": "subscribe",
+      "gospodarz talk-show": "talk show host",
+      "studio telewizyjne": "television studio",
+      "tweetować": "tweet",
+      "zwyczaje": "customs",
+      "odległa przeszłość": "distant past",
+      "oczekiwania": "expectations",
+      "tradycja rodzinna": "family tradition",
+      "odziedziczony,
