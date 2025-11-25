@@ -1,70 +1,104 @@
+
 <!DOCTYPE html>
 <html lang="pl">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Test słówek - English Practice</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fiszki – Nauka słówek</title>
   <style>
     body {
-      font-family: "Segoe UI", sans-serif;
-      background: linear-gradient(135deg, #4facfe, #00f2fe);
-      color: #fff;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
+      font-family: Arial, sans-serif;
       margin: 0;
-      padding: 20px;
+      background: #f4f4f4;
+    }
+    header {
+      background: #333;
+      color: white;
+      padding: 15px;
       text-align: center;
     }
-    h1 {
-      font-size: 1.8rem;
-      margin-bottom: 20px;
+    nav {
+      display: flex;
+      background: #444;
     }
-    #word {
-      font-size: 1.4rem;
-      margin: 20px 0;
-      background: rgba(255,255,255,0.1);
-      padding: 10px 20px;
-      border-radius: 12px;
-    }
-    input {
-      font-size: 1rem;
-      padding: 10px;
-      width: 80%;
+    nav button {
+      flex: 1;
+      padding: 15px;
+      background: #444;
+      color: white;
       border: none;
-      border-radius: 8px;
-      outline: none;
-      text-align: center;
-    }
-    button {
-      margin-top: 15px;
-      padding: 10px 20px;
-      font-size: 1rem;
-      border: none;
-      border-radius: 10px;
-      background: #fff;
-      color: #0078ff;
-      font-weight: bold;
       cursor: pointer;
+      font-size: 16px;
     }
-    #result {
+    nav button.active {
+      background: #666;
+    }
+    section {
+      display: none;
+      padding: 20px;
+    }
+    section.active {
+      display: block;
+    }
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      max-width: 400px;
+      margin: auto;
+      text-align: center;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
       margin-top: 20px;
-      font-size: 1.2rem;
+    }
+    table th, table td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: left;
+    }
+    #mixBtn {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
-  <h1>Test z angielskich słówek</h1>
-  <div id="word"></div>
-  <input type="text" id="answer" placeholder="Wpisz odpowiednik po angielsku">
-  <button onclick="checkAnswer()">Sprawdź</button>
-  <div id="result"></div>
+  <header><h1>Nauka słówek – Fiszki</h1></header>
+
+  <nav>
+    <button onclick="showTab('quiz')" class="active">Quiz</button>
+    <button onclick="showTab('lista')">Lista słówek</button>
+  </nav>
+
+  <!-- QUIZ -->
+  <section id="quiz" class="active">
+    <div class="card">
+      <h2 id="polishWord">Słowo</h2>
+      <input type="text" id="answerInput" placeholder="Wpisz tłumaczenie" />
+      <br><br>
+      <button onclick="checkAnswer()">Sprawdź</button>
+      <p id="result"></p>
+      <button onclick="nextWord()" style="display:none;" id="nextBtn">Dalej</button>
+    </div>
+  </section>
+
+  <!-- LISTA -->
+  <section id="lista">
+    <button id="mixBtn" onclick="mixWords()">Pomieszaj</button>
+    <table>
+      <thead>
+        <tr><th>Polski</th><th>Angielski</th></tr>
+      </thead>
+      <tbody id="wordsTable"></tbody>
+    </table>
+  </section>
 
   <script>
-    const words = {
-      // --- Film-making ---
+    const words = {   // --- Film-making ---
       "wybierać plener": "choose a location",
       "reżyserować film": "direct a film",
       "podążać za fabułą": "follow the plot",
@@ -159,32 +193,62 @@
       "przekazać dalej": "pass on",
       "prześledzić moje drzewo genealogiczne": "trace my family tree",
       "wychowanie": "upbringing",
-      "wartości": "values"
-    };
+      "wartości": "values"};
 
-    const polishWords = Object.keys(words);
+    const polishKeys = Object.keys(words);
     let currentWord = "";
 
-    function newWord() {
-      const randomIndex = Math.floor(Math.random() * polishWords.length);
-      currentWord = polishWords[randomIndex];
-      document.getElementById("word").textContent = currentWord;
-      document.getElementById("answer").value = "";
-      document.getElementById("result").textContent = "";
+    function showTab(id) {
+      document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+
+      document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+
+      if (id === 'lista') loadTable();
+    }
+
+    function loadTable() {
+      const table = document.getElementById('wordsTable');
+      table.innerHTML = "";
+      polishKeys.forEach(p => {
+        table.innerHTML += `<tr><td>${p}</td><td>${words[p]}</td></tr>`;
+      });
+    }
+
+    function mixWords() {
+      for (let i = polishKeys.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [polishKeys[i], polishKeys[j]] = [polishKeys[j], polishKeys[i]];
+      }
+      loadTable();
+    }
+
+    function nextWord() {
+      currentWord = polishKeys[Math.floor(Math.random() * polishKeys.length)];
+      document.getElementById('polishWord').innerText = currentWord;
+      document.getElementById('result').innerText = "";
+      document.getElementById('nextBtn').style.display = "none";
+      document.getElementById('answerInput').value = "";
     }
 
     function checkAnswer() {
-      const userAnswer = document.getElementById("answer").value.trim().toLowerCase();
-      const correctAnswer = words[currentWord].toLowerCase();
-      if (userAnswer === correctAnswer) {
-        document.getElementById("result").textContent = "✅ Dobrze!";
+      const ans = document.getElementById('answerInput').value.trim();
+      const correct = words[currentWord];
+      const result = document.getElementById('result');
+
+      if (ans.toLowerCase() === correct.toLowerCase()) {
+        result.style.color = 'green';
+        result.innerText = 'Poprawnie!';
       } else {
-        document.getElementById("result").textContent = "❌ Źle! Poprawna odpowiedź: " + words[currentWord];
+        result.style.color = 'red';
+        result.innerText = `Źle! Poprawna odpowiedź: ${correct}`;
       }
-      setTimeout(newWord, 2000);
+
+      document.getElementById('nextBtn').style.display = "block";
     }
 
-    newWord();
+    nextWord();
   </script>
 </body>
 </html>
