@@ -1,104 +1,54 @@
-
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Fiszki – Nauka słówek</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      background: #f4f4f4;
-    }
-    header {
-      background: #333;
-      color: white;
-      padding: 15px;
-      text-align: center;
-    }
-    nav {
-      display: flex;
-      background: #444;
-    }
-    nav button {
-      flex: 1;
-      padding: 15px;
-      background: #444;
-      color: white;
-      border: none;
-      cursor: pointer;
-      font-size: 16px;
-    }
-    nav button.active {
-      background: #666;
-    }
-    section {
-      display: none;
-      padding: 20px;
-    }
-    section.active {
-      display: block;
-    }
-    .card {
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-      max-width: 400px;
-      margin: auto;
-      text-align: center;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
-    table th, table td {
-      border: 1px solid #ccc;
-      padding: 10px;
-      text-align: left;
-    }
-    #mixBtn {
-      padding: 10px 20px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Fiszki – Nauka słówek</title>
+<style>
+body { font-family: Arial, sans-serif; margin: 0; background: #f4f4f4; }
+header { background: #333; color: white; padding: 15px; text-align: center; }
+nav { display: flex; background: #444; }
+nav button { flex: 1; padding: 15px; background: #444; color: white; border: none; cursor: pointer; font-size: 16px; }
+nav button.active { background: #666; }
+section { display: none; padding: 20px; }
+section.active { display: block; }
+.card { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); max-width: 600px; margin: auto; text-align: center; }
+input { width: 90%; padding: 20px; font-size: 22px; border-radius: 10px; border: 2px solid #999; }
+button { padding: 18px 30px; font-size: 22px; border-radius: 10px; border: none; background: #333; color: white; cursor: pointer; }
+table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+table th, table td { border: 1px solid #ccc; padding: 10px; text-align: left; font-size: 18px; }
+.hiddenWord { background: #ddd; color: transparent; cursor: pointer; }
+#mixBtn, #mixBtn2 { padding: 10px 20px; font-size: 18px; cursor: pointer; }
+</style>
 </head>
 <body>
-  <header><h1>Nauka słówek – Fiszki</h1></header>
+<header><h1>Nauka słówek – Fiszki</h1></header>
+<nav>
+<button onclick="showTab('quiz')" class="active">Quiz</button>
+<button onclick="showTab('lista')">Lista słówek</button>
+<button onclick="showTab('listaUkryta')">Lista zakryta</button>
+</nav>
+<section id="quiz" class="active">
+<div class="card">
+<h2 id="polishWord">Słowo</h2>
+<input type="text" id="answerInput" placeholder="Wpisz tłumaczenie" />
+<br><br>
+<button onclick="checkAnswer()">Sprawdź</button>
+<p id="result"></p>
+<button onclick="nextWord()" style="display:none;" id="nextBtn">Dalej</button>
+</div>
+</section>
+<section id="lista">
+<button id="mixBtn" onclick="mixWords()">Pomieszaj</button>
+<table><thead><tr><th>Polski</th><th>Angielski</th></tr></thead><tbody id="wordsTable"></tbody></table>
+</section>
+<section id="listaUkryta">
+<button id="mixBtn2" onclick="mixWords()">Pomieszaj</button>
+<table><thead><tr><th>Polski</th><th>Angielski (ukryty)</th></tr></thead><tbody id="wordsHiddenTable"></tbody></table>
+</section>
+<script>
+const words = {
 
-  <nav>
-    <button onclick="showTab('quiz')" class="active">Quiz</button>
-    <button onclick="showTab('lista')">Lista słówek</button>
-  </nav>
-
-  <!-- QUIZ -->
-  <section id="quiz" class="active">
-    <div class="card">
-      <h2 id="polishWord">Słowo</h2>
-      <input type="text" id="answerInput" placeholder="Wpisz tłumaczenie" />
-      <br><br>
-      <button onclick="checkAnswer()">Sprawdź</button>
-      <p id="result"></p>
-      <button onclick="nextWord()" style="display:none;" id="nextBtn">Dalej</button>
-    </div>
-  </section>
-
-  <!-- LISTA -->
-  <section id="lista">
-    <button id="mixBtn" onclick="mixWords()">Pomieszaj</button>
-    <table>
-      <thead>
-        <tr><th>Polski</th><th>Angielski</th></tr>
-      </thead>
-      <tbody id="wordsTable"></tbody>
-    </table>
-  </section>
-
-  <script>
-    const words = {   // --- Film-making ---
       "wybierać plener": "choose a location",
       "reżyserować film": "direct a film",
       "podążać za fabułą": "follow the plot",
@@ -112,7 +62,7 @@
       "pójść świetnie": "smashed it",
       "Żartujesz, prawda?": "You’re kidding, right?",
 
-      // --- Blogging ---
+      
       "być oryginalnym": "be original",
       "wpaść na nowe pomysły": "come up with new ideas",
       "nawiązać kontakt ze swoimi odbiorcami": "connect with your audience",
@@ -121,7 +71,7 @@
       "przejść do rzeczy": "get to the point",
       "używać wyobraźni": "use your imagination",
 
-      // --- Successful writing ---
+     
       "bloger": "blogger",
       "rozdział": "chapter",
       "okładka": "cover",
@@ -143,7 +93,7 @@
       "autor piosenek": "songwriter",
       "thriller": "thriller",
 
-      // --- Smartphone films ---
+     
       "animacja": "animation",
       "kopia zapasowa": "backup",
       "umiejący obsługiwać komputer": "computer literate",
@@ -154,7 +104,7 @@
       "oprogramowanie": "software",
       "efekty dźwiękowe": "sound effects",
 
-      // --- Participation in culture ---
+     
       "zaadaptować książkę": "adapt a book",
       "oklaskiwać występ": "applaud a performance",
       "wziąć udział w przesłuchaniu": "attend an audition",
@@ -173,7 +123,7 @@
       "gwiazda": "star",
       "kaskader / kaskaderka": "stuntman/stuntwoman",
 
-      // --- Media, traditions and culture ---
+      
       "ogłoszenie": "announcement",
       "bieżące wydarzenia": "current events",
       "gość": "guest",
@@ -193,62 +143,50 @@
       "przekazać dalej": "pass on",
       "prześledzić moje drzewo genealogiczne": "trace my family tree",
       "wychowanie": "upbringing",
-      "wartości": "values"};
+      "wartości": "values"
+};
 
-    const polishKeys = Object.keys(words);
-    let currentWord = "";
-
-    function showTab(id) {
-      document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
-      document.getElementById(id).classList.add('active');
-
-      document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
-      event.target.classList.add('active');
-
-      if (id === 'lista') loadTable();
-    }
-
-    function loadTable() {
-      const table = document.getElementById('wordsTable');
-      table.innerHTML = "";
-      polishKeys.forEach(p => {
-        table.innerHTML += `<tr><td>${p}</td><td>${words[p]}</td></tr>`;
-      });
-    }
-
-    function mixWords() {
-      for (let i = polishKeys.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [polishKeys[i], polishKeys[j]] = [polishKeys[j], polishKeys[i]];
-      }
-      loadTable();
-    }
-
-    function nextWord() {
-      currentWord = polishKeys[Math.floor(Math.random() * polishKeys.length)];
-      document.getElementById('polishWord').innerText = currentWord;
-      document.getElementById('result').innerText = "";
-      document.getElementById('nextBtn').style.display = "none";
-      document.getElementById('answerInput').value = "";
-    }
-
-    function checkAnswer() {
-      const ans = document.getElementById('answerInput').value.trim();
-      const correct = words[currentWord];
-      const result = document.getElementById('result');
-
-      if (ans.toLowerCase() === correct.toLowerCase()) {
-        result.style.color = 'green';
-        result.innerText = 'Poprawnie!';
-      } else {
-        result.style.color = 'red';
-        result.innerText = `Źle! Poprawna odpowiedź: ${correct}`;
-      }
-
-      document.getElementById('nextBtn').style.display = "block";
-    }
-
-    nextWord();
-  </script>
+const polishKeys = Object.keys(words);
+let currentWord = "";
+function showTab(id) {
+document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+document.getElementById(id).classList.add('active');
+document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+ event.target.classList.add('active');
+ if (id === 'lista') loadTable();
+ if (id === 'listaUkryta') loadHiddenTable();
+}
+function loadTable() {
+let table = document.getElementById('wordsTable');
+table.innerHTML = "";
+polishKeys.forEach(p => { table.innerHTML += `<tr><td>${p}</td><td>${words[p]}</td></tr>`; });
+}
+function loadHiddenTable() {
+let table = document.getElementById('wordsHiddenTable');
+table.innerHTML = "";
+polishKeys.forEach(p => { table.innerHTML += `<tr><td>${p}</td><td class='hiddenWord' onclick='reveal(this)'>${words[p]}</td></tr>`; });
+}
+function reveal(cell) { cell.style.color = "black"; cell.style.background = "white"; }
+function mixWords() {
+for (let i = polishKeys.length - 1; i > 0; i--) { const j = Math.floor(Math.random()*(i+1)); [polishKeys[i], polishKeys[j]] = [polishKeys[j], polishKeys[i]]; }
+loadTable(); loadHiddenTable();
+}
+function nextWord() {
+currentWord = polishKeys[Math.floor(Math.random()*polishKeys.length)];
+document.getElementById('polishWord').innerText = currentWord;
+document.getElementById('result').innerText = "";
+document.getElementById('nextBtn').style.display = "none";
+document.getElementById('answerInput').value = "";
+}
+function checkAnswer() {
+let ans = document.getElementById('answerInput').value.trim();
+let correct = words[currentWord];
+let result = document.getElementById('result');
+if (ans.toLowerCase() === correct.toLowerCase()) { result.style.color = 'green'; result.innerText = 'Poprawnie!'; }
+else { result.style.color = 'red'; result.innerText = `Źle! Poprawna odpowiedź: ${correct}`; }
+document.getElementById('nextBtn').style.display = "block";
+}
+nextWord();
+</script>
 </body>
 </html>
