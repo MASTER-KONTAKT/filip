@@ -1,116 +1,63 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test Słówek</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test Słówek</title>
 
-    <style>
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-        }
+<style>
+body {
+    font-family: 'Segoe UI', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+}
 
-        .container {
-            background: #fff;
-            padding: 2rem;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            width: 90%;
-            max-width: 450px;
-            text-align: center;
-        }
+.container {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    width: 90%;
+    max-width: 450px;
+    text-align: center;
+}
 
-        h1 {
-            color: #333;
-            margin-bottom: 10px;
-        }
+.word-to-translate {
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin: 25px 0;
+    color: #4a6cf7;
+}
 
-        .word-to-translate {
-            font-size: 1.8rem;
-            font-weight: bold;
-            margin: 25px 0;
-            color: #4a6cf7;
-        }
+input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+}
 
-        input {
-            width: 100%;
-            padding: 12px;
-            margin-top: 10px;
-            border: 2px solid #ddd;
-            border-radius: 10px;
-            font-size: 1rem;
-        }
+button {
+    margin-top: 15px;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 10px;
+    background: #4a6cf7;
+    color: white;
+    cursor: pointer;
+}
 
-        input:focus {
-            border-color: #4a6cf7;
-            outline: none;
-        }
+.correct { color: green; }
+.wrong { color: red; }
 
-        button {
-            background: linear-gradient(135deg, #4a6cf7, #6c8cff);
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            margin-top: 15px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: 0.3s;
-        }
-
-        button:hover {
-            transform: scale(1.05);
-        }
-
-        #feedback {
-            margin-top: 20px;
-            font-weight: bold;
-            min-height: 24px;
-        }
-
-        .correct {
-            color: #2ecc71;
-        }
-
-        .wrong {
-            color: #e74c3c;
-        }
-
-        #score {
-            margin-top: 10px;
-            font-size: 0.9rem;
-            color: #555;
-        }
-
-        #stats {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            font-weight: bold;
-            margin-top: 10px;
-        }
-
-        #correctCount {
-            color: #2ecc71;
-        }
-
-        #wrongCount {
-            color: #e74c3c;
-        }
-
-        select {
-            padding: 8px;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-            margin-bottom: 10px;
-        }
-    </style>
+#stats {
+    margin-top: 10px;
+    font-weight: bold;
+}
+</style>
 </head>
 
 <body>
@@ -118,7 +65,6 @@
 <div class="container">
     <h1>Test Słówek</h1>
 
-    <label>Wybierz kategorię:</label><br>
     <select id="category" onchange="resetGame()">
         <option value="all">Wszystkie</option>
         <option value="view">What a view</option>
@@ -129,25 +75,25 @@
         <option value="climate">Climate</option>
     </select>
 
-    <div class="word-to-translate" id="polishWord">Ładowanie...</div>
+    <div class="word-to-translate" id="polishWord"></div>
 
-    <input type="text" id="englishInput" placeholder="Wpisz po angielsku...">
+    <input id="englishInput" placeholder="Wpisz po angielsku">
 
     <button onclick="checkAnswer()">Sprawdź</button>
 
     <div id="feedback"></div>
 
-    <div id="score"></div>
-
     <div id="stats">
-        <span id="correctCount">✔ 0</span>
-        <span id="wrongCount">✖ 0</span>
+        ✔ <span id="correctCount">0</span> | ✖ <span id="wrongCount">0</span>
     </div>
+
+    <div id="score"></div>
 </div>
 
 <script>
-    const vocabulary = [
-         // What a view
+
+const vocabulary = [
+      // What a view
         { pl: "podziwiać krajobraz", en: "admire the landscape", cat: "view" },
         { pl: "na krawędzi klifu", en: "at the edges of the cliff", cat: "view" },
         { pl: "nad morzem", en: "at the seaside", cat: "view" },
@@ -233,86 +179,76 @@
         { pl: "sezonowy", en: "seasonal", cat: "climate" },
         
     ];
-    ];
+];
 
-    let currentList = [];
-    let currentWordIndex = 0;
-    let correctCount = 0;
-    let wrongCount = 0;
-    let totalAttempted = 0;
+let currentList = [];
+let index = 0;
+let correct = 0;
+let wrong = 0;
+let total = 0;
 
-    function resetGame() {
-        const cat = document.getElementById('category').value;
+function resetGame() {
+    const cat = document.getElementById("category").value;
 
-        if (cat === 'all') {
-            currentList = [...vocabulary];
-        } else {
-            currentList = vocabulary.filter(w => w.cat === cat);
-        }
+    currentList = (cat === "all") 
+        ? [...vocabulary] 
+        : vocabulary.filter(v => v.cat === cat);
 
-        currentList.sort(() => Math.random() - 0.5);
+    currentList.sort(() => Math.random() - 0.5);
 
-        currentWordIndex = 0;
-        correctCount = 0;
-        wrongCount = 0;
-        totalAttempted = 0;
+    index = 0;
+    correct = 0;
+    wrong = 0;
+    total = 0;
 
-        updateScore();
-        nextWord();
+    update();
+    next();
+}
+
+function next() {
+    if (index >= currentList.length) index = 0;
+
+    document.getElementById("polishWord").innerText =
+        currentList[index].pl;
+
+    document.getElementById("englishInput").value = "";
+    document.getElementById("feedback").innerText = "";
+}
+
+function checkAnswer() {
+    let user = document.getElementById("englishInput").value.trim().toLowerCase();
+    let correctAns = currentList[index].en.toLowerCase();
+
+    total++;
+
+    if (user === correctAns) {
+        correct++;
+        document.getElementById("feedback").innerText = "✔ Dobrze!";
+        document.getElementById("feedback").className = "correct";
+    } else {
+        wrong++;
+        document.getElementById("feedback").innerText = "✖ " + currentList[index].en;
+        document.getElementById("feedback").className = "wrong";
     }
 
-    function nextWord() {
-        if (currentWordIndex >= currentList.length) {
-            currentList.sort(() => Math.random() - 0.5);
-            currentWordIndex = 0;
-        }
+    index++;
+    update();
 
-        document.getElementById('polishWord').innerText =
-            currentList[currentWordIndex].pl;
+    setTimeout(next, 1000);
+}
 
-        document.getElementById('englishInput').value = '';
-        document.getElementById('feedback').innerText = '';
-        document.getElementById('englishInput').focus();
-    }
+function update() {
+    document.getElementById("correctCount").innerText = correct;
+    document.getElementById("wrongCount").innerText = wrong;
+    document.getElementById("score").innerText = `Wynik: ${correct}/${total}`;
+}
 
-    function checkAnswer() {
-        const userAns = document.getElementById('englishInput').value.trim().toLowerCase();
-        const correctAns = currentList[currentWordIndex].en.toLowerCase();
-        const feedback = document.getElementById('feedback');
+document.getElementById("englishInput").addEventListener("keypress", e => {
+    if (e.key === "Enter") checkAnswer();
+});
 
-        totalAttempted++;
+resetGame();
 
-        if (userAns === correctAns) {
-            feedback.innerText = "✔ Brawo!";
-            feedback.className = "correct";
-            correctCount++;
-            setTimeout(nextWord, 1000);
-        } else {
-            feedback.innerText = `✖ Poprawna odpowiedź: ${currentList[currentWordIndex].en}`;
-            feedback.className = "wrong";
-            wrongCount++;
-            setTimeout(nextWord, 2500);
-        }
-
-        currentWordIndex++;
-        updateScore();
-    }
-
-    function updateScore() {
-        document.getElementById('score').innerText =
-            `Wynik: ${correctCount} / ${totalAttempted}`;
-
-        document.getElementById('correctCount').innerText = `✔ ${correctCount}`;
-        document.getElementById('wrongCount').innerText = `✖ ${wrongCount}`;
-    }
-
-    document.getElementById('englishInput').addEventListener('keypress', function (e) {
-        if (e.key === 'Enter') {
-            checkAnswer();
-        }
-    });
-
-    resetGame();
 </script>
 
 </body>
