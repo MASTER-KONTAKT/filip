@@ -3,50 +3,151 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test Słówek - Język Angielski</title>
+    <title>Test Słówek</title>
+
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background-color: #f0f2f5; }
-        .container { background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 90%; max-width: 500px; text-align: center; }
-        h1 { color: #2c3e50; font-size: 1.5rem; }
-        .word-to-translate { font-size: 1.8rem; font-weight: bold; margin: 20px 0; color: #3498db; }
-        input { width: 100%; padding: 12px; margin: 10px 0; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem; box-sizing: border-box; }
-        button { background-color: #2ecc71; color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-size: 1rem; transition: background 0.3s; }
-        button:hover { background-color: #27ae60; }
-        #feedback { margin-top: 20px; font-weight: bold; min-height: 24px; }
-        .correct { color: #27ae60; }
-        .wrong { color: #e74c3c; }
-        select { padding: 8px; margin-bottom: 20px; border-radius: 5px; border: 1px solid #ccc; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .container {
+            background: #fff;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            width: 90%;
+            max-width: 450px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .word-to-translate {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin: 25px 0;
+            color: #4a6cf7;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1rem;
+        }
+
+        input:focus {
+            border-color: #4a6cf7;
+            outline: none;
+        }
+
+        button {
+            background: linear-gradient(135deg, #4a6cf7, #6c8cff);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            margin-top: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+        }
+
+        #feedback {
+            margin-top: 20px;
+            font-weight: bold;
+            min-height: 24px;
+        }
+
+        .correct {
+            color: #2ecc71;
+        }
+
+        .wrong {
+            color: #e74c3c;
+        }
+
+        #score {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        #stats {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        #correctCount {
+            color: #2ecc71;
+        }
+
+        #wrongCount {
+            color: #e74c3c;
+        }
+
+        select {
+            padding: 8px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
+
 <body>
 
 <div class="container">
     <h1>Test Słówek</h1>
-    
-    <label for="category">Wybierz kategorię:</label><br>
+
+    <label>Wybierz kategorię:</label><br>
     <select id="category" onchange="resetGame()">
         <option value="all">Wszystkie</option>
-        <option value="view">What a view (p.24)</option>
-        <option value="warming">Global warming (p.28)</option>
-        <option value="future">Post-carbon future (p.30)</option>
-        <option value="dilemma">Moral dilemma (p.32)</option>
-        <option value="disasters">Flora & Disasters (p.36)</option>
-        <option value="climate">Climate & Weather (p.137)</option>
+        <option value="view">What a view</option>
+        <option value="warming">Global warming</option>
+        <option value="future">Post-carbon future</option>
+        <option value="dilemma">Moral dilemma</option>
+        <option value="disasters">Disasters</option>
+        <option value="climate">Climate</option>
     </select>
 
     <div class="word-to-translate" id="polishWord">Ładowanie...</div>
-    
-    <input type="text" id="englishInput" placeholder="Wpisz po angielsku..." autocomplete="off">
-    <br>
+
+    <input type="text" id="englishInput" placeholder="Wpisz po angielsku...">
+
     <button onclick="checkAnswer()">Sprawdź</button>
-    
+
     <div id="feedback"></div>
-    <div id="score" style="margin-top: 10px; font-size: 0.9rem; color: #7f8c8d;"></div>
+
+    <div id="score"></div>
+
+    <div id="stats">
+        <span id="correctCount">✔ 0</span>
+        <span id="wrongCount">✖ 0</span>
+    </div>
 </div>
 
 <script>
     const vocabulary = [
-        // What a view
+         // What a view
         { pl: "podziwiać krajobraz", en: "admire the landscape", cat: "view" },
         { pl: "na krawędzi klifu", en: "at the edges of the cliff", cat: "view" },
         { pl: "nad morzem", en: "at the seaside", cat: "view" },
@@ -132,23 +233,30 @@
         { pl: "sezonowy", en: "seasonal", cat: "climate" },
         
     ];
+    ];
 
     let currentList = [];
     let currentWordIndex = 0;
     let correctCount = 0;
+    let wrongCount = 0;
     let totalAttempted = 0;
 
     function resetGame() {
         const cat = document.getElementById('category').value;
+
         if (cat === 'all') {
             currentList = [...vocabulary];
         } else {
             currentList = vocabulary.filter(w => w.cat === cat);
         }
+
         currentList.sort(() => Math.random() - 0.5);
+
         currentWordIndex = 0;
         correctCount = 0;
+        wrongCount = 0;
         totalAttempted = 0;
+
         updateScore();
         nextWord();
     }
@@ -158,7 +266,10 @@
             currentList.sort(() => Math.random() - 0.5);
             currentWordIndex = 0;
         }
-        document.getElementById('polishWord').innerText = currentList[currentWordIndex].pl;
+
+        document.getElementById('polishWord').innerText =
+            currentList[currentWordIndex].pl;
+
         document.getElementById('englishInput').value = '';
         document.getElementById('feedback').innerText = '';
         document.getElementById('englishInput').focus();
@@ -168,36 +279,39 @@
         const userAns = document.getElementById('englishInput').value.trim().toLowerCase();
         const correctAns = currentList[currentWordIndex].en.toLowerCase();
         const feedback = document.getElementById('feedback');
-        
+
         totalAttempted++;
-        
+
         if (userAns === correctAns) {
-            feedback.innerText = "Brawo! Poprawnie.";
+            feedback.innerText = "✔ Brawo!";
             feedback.className = "correct";
             correctCount++;
             setTimeout(nextWord, 1000);
         } else {
-            feedback.innerText = `Błąd! Poprawna odpowiedź: ${currentList[currentWordIndex].en}`;
+            feedback.innerText = `✖ Poprawna odpowiedź: ${currentList[currentWordIndex].en}`;
             feedback.className = "wrong";
+            wrongCount++;
             setTimeout(nextWord, 2500);
         }
-        
+
         currentWordIndex++;
         updateScore();
     }
 
     function updateScore() {
-        document.getElementById('score').innerText = `Wynik: ${correctCount} / ${totalAttempted}`;
+        document.getElementById('score').innerText =
+            `Wynik: ${correctCount} / ${totalAttempted}`;
+
+        document.getElementById('correctCount').innerText = `✔ ${correctCount}`;
+        document.getElementById('wrongCount').innerText = `✖ ${wrongCount}`;
     }
 
-    // Obsługa klawisza Enter
     document.getElementById('englishInput').addEventListener('keypress', function (e) {
         if (e.key === 'Enter') {
             checkAnswer();
         }
     });
 
-    // Start gry
     resetGame();
 </script>
 
