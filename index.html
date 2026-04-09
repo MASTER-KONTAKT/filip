@@ -7,44 +7,41 @@
 
 <style>
 body {
-    font-family: 'Segoe UI', sans-serif;
+    font-family: Arial;
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
-    margin: 0;
+    height: 100vh;
     background: linear-gradient(135deg, #667eea, #764ba2);
 }
 
 .container {
-    background: #fff;
-    padding: 2rem;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-    width: 90%;
-    max-width: 450px;
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
     text-align: center;
+    width: 350px;
 }
 
-.word-to-translate {
-    font-size: 1.8rem;
+.word {
+    font-size: 24px;
     font-weight: bold;
-    margin: 25px 0;
     color: #4a6cf7;
+    margin: 20px 0;
 }
 
 input {
     width: 100%;
-    padding: 12px;
-    border: 2px solid #ddd;
-    border-radius: 10px;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
 }
 
 button {
-    margin-top: 15px;
-    padding: 12px 25px;
+    margin-top: 10px;
+    padding: 10px;
     border: none;
-    border-radius: 10px;
+    border-radius: 8px;
     background: #4a6cf7;
     color: white;
     cursor: pointer;
@@ -53,9 +50,8 @@ button {
 .correct { color: green; }
 .wrong { color: red; }
 
-#stats {
+.stats {
     margin-top: 10px;
-    font-weight: bold;
 }
 </style>
 </head>
@@ -63,7 +59,8 @@ button {
 <body>
 
 <div class="container">
-    <h1>Test Słówek</h1>
+
+    <h2>Test Słówek</h2>
 
     <select id="category" onchange="resetGame()">
         <option value="all">Wszystkie</option>
@@ -75,25 +72,28 @@ button {
         <option value="climate">Climate</option>
     </select>
 
-    <div class="word-to-translate" id="polishWord"></div>
+    <div class="word" id="polishWord"></div>
 
-    <input id="englishInput" placeholder="Wpisz po angielsku">
+    <input id="input" placeholder="Wpisz po angielsku">
+
+    <br>
 
     <button onclick="checkAnswer()">Sprawdź</button>
+    <button onclick="nextWord()">Dalej</button>
 
     <div id="feedback"></div>
 
-    <div id="stats">
-        ✔ <span id="correctCount">0</span> | ✖ <span id="wrongCount">0</span>
+    <div class="stats">
+        ✔ <span id="correct">0</span> |
+        ✖ <span id="wrong">0</span>
     </div>
 
-    <div id="score"></div>
 </div>
 
 <script>
 
 const vocabulary = [
-      // What a view
+     // What a view
         { pl: "podziwiać krajobraz", en: "admire the landscape", cat: "view" },
         { pl: "na krawędzi klifu", en: "at the edges of the cliff", cat: "view" },
         { pl: "nad morzem", en: "at the seaside", cat: "view" },
@@ -105,6 +105,13 @@ const vocabulary = [
         { pl: "dolina", en: "valley", cat: "view" },
         { pl: "wodospad", en: "waterfall", cat: "view" },
         { pl: "to takie proste", en: "as simple as that", cat: "view" },
+        { pl: "przegapic", en: "miss out on", cat: "view" },
+        { pl: "mnie pasuje", en: "fine by me", cat: "view" },
+        { pl: "nie widzeic sensu", en: "didnt see the point", cat: "view" },
+        { pl: "przed smiercia ", en: "bucket list", cat: "view" },
+        { pl: "smiertelnie zmeczony", en: "dead tired", cat: "view" },
+        { pl: "obszar leśny", en: "woodland area", cat: "view" },
+        { pl: "strumien gorski", en: "mountain stream", cat: "view" },
         
         // Global warming
         { pl: "zmiana klimatu", en: "climate change", cat: "warming" },
@@ -118,6 +125,12 @@ const vocabulary = [
         { pl: "zrównoważony", en: "sustainable", cat: "warming" },
         { pl: "turbina wiatrowa", en: "wind turbine", cat: "warming" },
         { pl: "problemy z ochrona srodo", en: "environmental problem", cat: "warming" },
+        { pl: "przetwarzanie odpadow", en: "recycling waste", cat: "warming" },
+        { pl: "zanieczyszczac atmosfere", en: "polluting the atmosphere", cat: "warming" },
+        { pl: "szkodzic", en: "harm", cat: "warming" },
+        { pl: "miec wplyw na ", en: "have an impact on", cat: "warming" },
+        { pl: "panel sloneczny", en: "solar panel", cat: "warming" },
+
         
         
         // Post-carbon future
@@ -131,9 +144,12 @@ const vocabulary = [
         { pl: "walczyc o cos", en: "fight for", cat: "future" },
         { pl: "mineral", en: "mineral", cat: "future" },
         { pl: "misja", en: "mission", cat: "future" },
-        { pl: "kolonia", en: "colony", cat: "future" },
-        { pl: "wyprawa na inna planete ", en: "planetary wxpedition", cat: "future" },
+        { pl: "wyprawa na inna planete ", en: "planetary expedition", cat: "future" },
         { pl: "eksploracja kosmosu", en: "space exploration", cat: "future" },
+        { pl: "cieplarnia", en: "greenhouse", cat: "future" },
+        { pl: "orbitowac", en: "orbit", cat: "future" },
+        { pl: "statek kosmiczny", en: "rocket", cat: "future" },
+
         
 
         // Moral dilemma
@@ -142,8 +158,8 @@ const vocabulary = [
         { pl: "obowiązek", en: "duty", cat: "dilemma" },
         { pl: "stawiać czoła", en: "face", cat: "dilemma" },
         { pl: "winny", en: "guilty", cat: "dilemma" },
-        { pl: "perspektywa", en: "guilty", cat: "perspective" },
-        { pl: "zasada", en: "guilty", cat: "principle" },
+        { pl: "perspektywa", en: "perspective", cat: "dilemma" },
+        { pl: "zasada", en: "principle", cat: "dilemma" },
 
         // Disasters
         { pl: "rafa koralowa", en: "coral reef", cat: "disasters" },
@@ -155,18 +171,23 @@ const vocabulary = [
         { pl: "zanieczyszczać", en: "contaminate", cat: "disasters" },
         { pl: "istotny", en: "critical", cat: "disasters" },
         { pl: "ewakuowac", en: "evacuate", cat: "disasters" },
-        { pl: "uciekac", en: "flrr", cat: "disasters" },
+        { pl: "uciekac", en: "flee", cat: "disasters" },
         { pl: "śnieżyca", en: "blizzard", cat: "disasters" },
-        { pl: "cyklon", en: "contaminate", cat: "cyclone" },
+        { pl: "cyklon", en: "cyclone", cat: "disasters" },
         { pl: "erozja", en: "erosion", cat: "disasters" },
         { pl: "osuwisko", en: "landslide", cat: "disasters" },
         { pl: "fala plywowa", en: "tidal wave", cat: "disasters" },
         { pl: "topniejący lodowiec", en: "melting glacier", cat: "disasters" },
+        { pl: "rezerwat przyrodowy", en: "nature reserve", cat: "disasters" },
+        { pl: "radioaktywny", en: "radioactive", cat: "disasters" },
+        { pl: "toksyczny", en: "toxic", cat: "disasters" },
+
+
 
         // Weather
         { pl: "jakość powietrza", en: "air quality", cat: "climate" },
         { pl: "biodegradowalny", en: "biodegradable", cat: "climate" },
-        { pl: "biodiveristy", en: "bioroznordny", cat: "climate" },
+        { pl: "bioroznorodnosc", en: "biodiveristy", cat: "climate" },
         { pl: "ślad węglowy", en: "carbon footprint", cat: "climate" },
         { pl: "wilgotność", en: "humidity", cat: "climate" },
         { pl: "ulewa", en: "downpour", cat: "climate" },
@@ -177,73 +198,91 @@ const vocabulary = [
         { pl: "polkula", en: "hemisphere", cat: "climate" },
         { pl: "nieprzewidywalny", en: "unpredictable", cat: "climate" },
         { pl: "sezonowy", en: "seasonal", cat: "climate" },
+        { pl: "ekosystem", en: "ecosystem", cat: "climate" },
+        { pl: "zmienny", en: "changeable", cat: "climate" },
+
+
         
-    ];
+    
 ];
 
-let currentList = [];
+let list = [];
 let index = 0;
 let correct = 0;
 let wrong = 0;
-let total = 0;
 
 function resetGame() {
     const cat = document.getElementById("category").value;
 
-    currentList = (cat === "all") 
-        ? [...vocabulary] 
+    list = (cat === "all")
+        ? [...vocabulary]
         : vocabulary.filter(v => v.cat === cat);
 
-    currentList.sort(() => Math.random() - 0.5);
+    list.sort(() => Math.random() - 0.5);
 
     index = 0;
     correct = 0;
     wrong = 0;
-    total = 0;
 
     update();
-    next();
-}
+    showWord();
 
-function next() {
-    if (index >= currentList.length) index = 0;
-
-    document.getElementById("polishWord").innerText =
-        currentList[index].pl;
-
-    document.getElementById("englishInput").value = "";
     document.getElementById("feedback").innerText = "";
 }
 
-function checkAnswer() {
-    let user = document.getElementById("englishInput").value.trim().toLowerCase();
-    let correctAns = currentList[index].en.toLowerCase();
-
-    total++;
-
-    if (user === correctAns) {
-        correct++;
-        document.getElementById("feedback").innerText = "✔ Dobrze!";
-        document.getElementById("feedback").className = "correct";
-    } else {
-        wrong++;
-        document.getElementById("feedback").innerText = "✖ " + currentList[index].en;
-        document.getElementById("feedback").className = "wrong";
+function showWord() {
+    if (index >= list.length) {
+        endGame();
+        return;
     }
 
-    index++;
-    update();
+    document.getElementById("polishWord").innerText = list[index].pl;
+    document.getElementById("input").value = "";
+}
 
-    setTimeout(next, 1000);
+function checkAnswer() {
+    if (index >= list.length) return;
+
+    const user = document.getElementById("input").value.trim().toLowerCase();
+    const correctAns = list[index].en.toLowerCase();
+
+    if (user === correctAns) {
+        document.getElementById("feedback").innerText = "✔ Dobrze!";
+        document.getElementById("feedback").className = "correct";
+        correct++;
+    } else {
+        document.getElementById("feedback").innerText = "✖ " + list[index].en;
+        document.getElementById("feedback").className = "wrong";
+        wrong++;
+    }
+
+    update();
+    index++;
+    setTimeout(showWord, 800);
 }
 
 function update() {
-    document.getElementById("correctCount").innerText = correct;
-    document.getElementById("wrongCount").innerText = wrong;
-    document.getElementById("score").innerText = `Wynik: ${correct}/${total}`;
+    document.getElementById("correct").innerText = correct;
+    document.getElementById("wrong").innerText = wrong;
 }
 
-document.getElementById("englishInput").addEventListener("keypress", e => {
+function endGame() {
+    document.getElementById("polishWord").innerText = "Koniec!";
+    document.getElementById("input").style.display = "none";
+    document.querySelector("button[onclick='checkAnswer()']").style.display = "none";
+    document.querySelector("button[onclick='nextWord()']").style.display = "none";
+
+    document.getElementById("feedback").innerHTML =
+        `Twój wynik: ${correct} / ${list.length}`;
+
+    // przycisk restartu
+    const btn = document.createElement("button");
+    btn.innerText = "🔁 Zrób ponownie";
+    btn.onclick = () => location.reload();
+    document.querySelector(".container").appendChild(btn);
+}
+
+document.getElementById("input").addEventListener("keypress", e => {
     if (e.key === "Enter") checkAnswer();
 });
 
