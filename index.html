@@ -3,89 +3,200 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Test Słówek</title>
+<title>Quiz Słówek</title>
 
 <style>
-body {
-    font-family: Arial;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background: linear-gradient(135deg, #667eea, #764ba2);
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
 }
 
-.container {
-    background: white;
-    padding: 20px;
-    border-radius: 15px;
-    text-align: center;
-    width: 350px;
+body{
+    font-family:"Segoe UI",sans-serif;
+    min-height:100vh;
+    background:linear-gradient(135deg,#0f172a,#1e293b,#334155);
+    color:white;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
 }
 
-.word {
-    font-size: 24px;
-    font-weight: bold;
-    color: #4a6cf7;
-    margin: 20px 0;
+.app{
+    width:100%;
+    max-width:800px;
+    background:rgba(255,255,255,0.08);
+    backdrop-filter:blur(18px);
+    border:1px solid rgba(255,255,255,0.15);
+    border-radius:28px;
+    padding:30px;
+    box-shadow:0 20px 50px rgba(0,0,0,0.4);
 }
 
-input {
-    width: 100%;
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
+h1{
+    text-align:center;
+    margin-bottom:25px;
 }
 
-button {
-    margin-top: 10px;
-    padding: 10px;
-    border: none;
-    border-radius: 8px;
-    background: #4a6cf7;
-    color: white;
-    cursor: pointer;
+.hidden{
+    display:none;
 }
 
-.correct { color: green; }
-.wrong { color: red; }
+.categories{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:15px;
+}
 
-.stats {
-    margin-top: 10px;
+.category-btn{
+    padding:18px;
+    border:none;
+    border-radius:18px;
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
+    background:rgba(255,255,255,0.12);
+    color:white;
+    transition:0.2s;
+}
+
+.category-btn:hover{
+    transform:translateY(-3px);
+    background:rgba(255,255,255,0.2);
+}
+
+.all-btn{
+    grid-column:1 / span 2;
+}
+
+.quiz-box{
+    text-align:center;
+}
+
+.progress{
+    margin-bottom:20px;
+    color:#cbd5e1;
+}
+
+.word{
+    font-size:30px;
+    font-weight:bold;
+    color:#93c5fd;
+    margin:25px 0;
+}
+
+input{
+    width:100%;
+    padding:15px;
+    border:none;
+    border-radius:16px;
+    font-size:16px;
+    margin-bottom:15px;
+}
+
+button{
+    width:100%;
+    padding:15px;
+    border:none;
+    border-radius:16px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.check{
+    background:#2563eb;
+    color:white;
+}
+
+.result-box{
+    text-align:center;
+}
+
+.score{
+    font-size:28px;
+    margin:20px 0;
+}
+
+.errors{
+    margin-top:20px;
+    text-align:left;
+    max-height:350px;
+    overflow:auto;
+    background:rgba(255,255,255,0.08);
+    padding:15px;
+    border-radius:18px;
+}
+
+.restart{
+    margin-top:20px;
+    background:#22c55e;
+    color:white;
+}
+
+.polish-word{
+    color:white;
+    font-weight:bold;
+}
+
+.user-answer{
+    color:#ef4444;
+    font-weight:bold;
+}
+
+.correct-answer{
+    color:#22c55e;
+    font-weight:bold;
+}
+
+.error-row{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    gap:10px;
+    padding:10px 0;
+    border-bottom:1px solid rgba(255,255,255,0.1);
 }
 </style>
 </head>
-
 <body>
 
-<div class="container">
+<div class="app">
 
-    <h2>Test Słówek</h2>
+    <!-- WYBÓR KATEGORII -->
+    <div id="categoryScreen">
+        <h1>📘 Wybierz kategorię</h1>
+        <div class="categories">
+            <button class="category-btn all-btn" onclick="startQuiz('all')">Wszystkie</button>
+            <button class="category-btn" onclick="startQuiz('wrong')">Whats Wrong</button>
+            <button class="category-btn" onclick="startQuiz('foods')">Health Foods</button>
+            <button class="category-btn" onclick="startQuiz('better')">Getting Better</button>
+            <button class="category-btn" onclick="startQuiz('outbreaks')">Outbreaks</button>
+            <button class="category-btn" onclick="startQuiz('emotions')">Managing Emotions</button>
+            <button class="category-btn" onclick="startQuiz('conversation')">Conversation</button>
+            <button class="category-btn" onclick="startQuiz('scientific')">Scientific</button>
+            <button class="category-btn" onclick="startQuiz('products')">Food Products</button>
+        </div>
+    </div>
 
-    <select id="category" onchange="resetGame()">
-        <option value="all">Wszystkie</option>
-        <option value="view">What a view</option>
-        <option value="warming">Global warming</option>
-        <option value="future">Post-carbon future</option>
-        <option value="dilemma">Moral dilemma</option>
-        <option value="disasters">Disasters</option>
-        <option value="climate">Climate</option>
-    </select>
+    <!-- QUIZ -->
+    <div id="quizScreen" class="hidden">
+        <div class="quiz-box">
+            <div class="progress" id="progress"></div>
+            <div class="word" id="word"></div>
+            <input id="answer" placeholder="Wpisz po angielsku">
+            <button class="check" onclick="checkAnswer()">Sprawdź</button>
+            <div id="feedback" style="margin-top:15px;"></div>
+        </div>
+    </div>
 
-    <div class="word" id="polishWord"></div>
-
-    <input id="input" placeholder="Wpisz po angielsku">
-
-    <br>
-
-    <button onclick="checkAnswer()">Sprawdź</button>
-    <button onclick="nextWord()">Dalej</button>
-
-    <div id="feedback"></div>
-
-    <div class="stats">
-        ✔ <span id="correct">0</span> |
-        ✖ <span id="wrong">0</span>
+    <!-- WYNIKI -->
+    <div id="resultScreen" class="hidden">
+        <div class="result-box">
+            <h1>🏆 Wynik</h1>
+            <div class="score" id="score"></div>
+            <div class="errors" id="errorsList"></div>
+            <button class="restart" onclick="goHome()">🔁 Powrót</button>
+        </div>
     </div>
 
 </div>
@@ -93,200 +204,234 @@ button {
 <script>
 
 const vocabulary = [
-     // What a view
-        { pl: "podziwiać krajobraz", en: "admire the landscape", cat: "view" },
-        { pl: "na krawędzi klifu", en: "at the edges of the cliff", cat: "view" },
-        { pl: "nad morzem", en: "at the seaside", cat: "view" },
-        { pl: "widok zapierający dech w piersiach", en: "breathtaking view", cat: "view" },
-        { pl: "jaskinia", en: "cave", cat: "view" },
-        { pl: "wybrzeże", en: "coast", cat: "view" },
-        { pl: "przepiękna sceneria", en: "gorgeous scenery", cat: "view" },
-        { pl: "łąka", en: "grassland", cat: "view" },
-        { pl: "dolina", en: "valley", cat: "view" },
-        { pl: "wodospad", en: "waterfall", cat: "view" },
-        { pl: "to takie proste", en: "as simple as that", cat: "view" },
-        { pl: "przegapic", en: "miss out on", cat: "view" },
-        { pl: "mnie pasuje", en: "fine by me", cat: "view" },
-        { pl: "nie widzeic sensu", en: "didnt see the point", cat: "view" },
-        { pl: "przed smiercia ", en: "bucket list", cat: "view" },
-        { pl: "smiertelnie zmeczony", en: "dead tired", cat: "view" },
-        { pl: "obszar leśny", en: "woodland area", cat: "view" },
-        { pl: "strumien gorski", en: "mountain stream", cat: "view" },
-        
-        // Global warming
-        { pl: "zmiana klimatu", en: "climate change", cat: "warming" },
-        { pl: "wylesianie", en: "deforestation", cat: "warming" },
-        { pl: "globalne ocieplenie", en: "global warming", cat: "warming" },
-        { pl: "emisja gazów cieplarnianych", en: "greenhouse gas emission", cat: "warming" },
-        { pl: "zasoby naturalne", en: "natural resources", cat: "warming" },
-        { pl: "energia jądrowa", en: "nuclear energy", cat: "warming" },
-        { pl: "elektrownia", en: "power station", cat: "warming" },
-        { pl: "energia odnawialna", en: "renewable energy", cat: "warming" },
-        { pl: "zrównoważony", en: "sustainable", cat: "warming" },
-        { pl: "turbina wiatrowa", en: "wind turbine", cat: "warming" },
-        { pl: "problemy z ochrona srodo", en: "environmental problem", cat: "warming" },
-        { pl: "przetwarzanie odpadow", en: "recycling waste", cat: "warming" },
-        { pl: "zanieczyszczac atmosfere", en: "polluting the atmosphere", cat: "warming" },
-        { pl: "szkodzic", en: "harm", cat: "warming" },
-        { pl: "miec wplyw na ", en: "have an impact on", cat: "warming" },
-        { pl: "panel sloneczny", en: "solar panel", cat: "warming" },
 
-        
-        
-        // Post-carbon future
-        { pl: "atmosfera", en: "atmosphere", cat: "future" },
-        { pl: "aktywista na rzecz ochrony środowiska", en: "environmental activist", cat: "future" },
-        { pl: "wystrzelić", en: "launch", cat: "future" },
-        { pl: "warstwa ozonowa", en: "ozone layer", cat: "future" },
-        { pl: "układ słoneczny", en: "solar system", cat: "future" },
-        { pl: "rozrzucić / rozłożyć", en: "spread", cat: "future" },
-        { pl: "kolonia", en: "colony", cat: "future" },
-        { pl: "walczyc o cos", en: "fight for", cat: "future" },
-        { pl: "mineral", en: "mineral", cat: "future" },
-        { pl: "misja", en: "mission", cat: "future" },
-        { pl: "wyprawa na inna planete ", en: "planetary expedition", cat: "future" },
-        { pl: "eksploracja kosmosu", en: "space exploration", cat: "future" },
-        { pl: "cieplarnia", en: "greenhouse", cat: "future" },
-        { pl: "orbitowac", en: "orbit", cat: "future" },
-        { pl: "statek kosmiczny", en: "rocket", cat: "future" },
+    // Whats Wrong
+   
+        { pl: "ból plecow ", en: "backache", cat: "wrong" },
+        { pl: "oparzenie", en: "burn", cat: "wrong" },
+        { pl: "kaszel", en: "cough", cat: "wrong" },
+        { pl: "sklaleczenie", en: "cut", cat: "wrong" },
+        { pl: "gorączka", en: "fever", cat: "wrong" },
+        { pl: "przeziębić sie", en: "get a cold", cat: "wrong" },
+        { pl: "dostac zadyszki", en: "get out of breath", cat: "wrong" },
+        { pl: "atak serca", en: "heart attack", cat: "wrong" },
+        { pl: "infekcja", en: "infection", cat: "wrong" },
+        { pl: "ukaszenie przez komara", en: "mosquito bite", cat: "wrong" },
+        { pl: "ból gardla", en: "sore throat", cat: "wrong" },
+        { pl: "grypa", en: "the flu", cat: "wrong" },
+        { pl: "troche nietypowy", en: "a bit random", cat: "wrong" },
+        { pl: "chwileczke", en: "hang on a sec", cat: "wrong" },
+        { pl: "jak to?", en: "how come", cat: "wrong" },
+        { pl: "u mnie swietnie", en: "im epic", cat: "wrong" },
+        { pl: "krotko mowiac", en: "to cut a long story short", cat: "wrong" },
 
-        
+    // Health Foods
+    { pl:"ograniczac", en:"cut down", cat:"foods" },
+    { pl:"zalezec od czegos", en:"depend on", cat:"foods" },
+    { pl:"przekazac,wyjasnic", en:"get across", cat:"foods" },
+    { pl:"rozpoczynac cos", en:"go ahead", cat:"foods" },
+    { pl:"ciagle o czyms mowic", en:"go on", cat:"foods" },
+    { pl:"kontunuowac", en:"keep on", cat:"foods" },
+    { pl:"przybierac ", en:"put on", cat:"foods" },
+    { pl:"rozwiazac", en:"work out", cat:"foods" },
+   
 
-        // Moral dilemma
-        { pl: "konsekwencja", en: "consequence", cat: "dilemma" },
-        { pl: "dylemat", en: "dilemma", cat: "dilemma" },
-        { pl: "obowiązek", en: "duty", cat: "dilemma" },
-        { pl: "stawiać czoła", en: "face", cat: "dilemma" },
-        { pl: "winny", en: "guilty", cat: "dilemma" },
-        { pl: "perspektywa", en: "perspective", cat: "dilemma" },
-        { pl: "zasada", en: "principle", cat: "dilemma" },
-
-        // Disasters
-        { pl: "rafa koralowa", en: "coral reef", cat: "disasters" },
-        { pl: "zagrożone gatunki", en: "endangered species", cat: "disasters" },
-        { pl: "wymarcie", en: "extinction", cat: "disasters" },
-        { pl: "srodowisko zycia", en: "habitat", cat: "disasters" },
-        { pl: "migrowac", en: "migrate", cat: "disasters" },
-        { pl: "brzeg", en: "shore", cat: "disasters" },
-        { pl: "zanieczyszczać", en: "contaminate", cat: "disasters" },
-        { pl: "istotny", en: "critical", cat: "disasters" },
-        { pl: "ewakuowac", en: "evacuate", cat: "disasters" },
-        { pl: "uciekac", en: "flee", cat: "disasters" },
-        { pl: "śnieżyca", en: "blizzard", cat: "disasters" },
-        { pl: "cyklon", en: "cyclone", cat: "disasters" },
-        { pl: "erozja", en: "erosion", cat: "disasters" },
-        { pl: "osuwisko", en: "landslide", cat: "disasters" },
-        { pl: "fala plywowa", en: "tidal wave", cat: "disasters" },
-        { pl: "topniejący lodowiec", en: "melting glacier", cat: "disasters" },
-        { pl: "rezerwat przyrodowy", en: "nature reserve", cat: "disasters" },
-        { pl: "radioaktywny", en: "radioactive", cat: "disasters" },
-        { pl: "toksyczny", en: "toxic", cat: "disasters" },
+    // Getting Better
+    { pl:"badanie krwi", en:"blood test ", cat:"better" },
+    { pl:";lekarstwo ", en:"cure", cat:"better" },
+    { pl:"dostac recepte ", en:"get a prescription", cat:"better" },
+    { pl:"isc na badanie kontrolne ", en:"go for a check-up", cat:"better" },
+    { pl:"utrzymywac/dbac o forme ", en:"keep in shape", cat:"better" },
+    { pl:"zdrowie psychiczne ", en:"mental health", cat:"better" },
+    { pl:"naturalne leczenie", en:"natural treatment", cat:"better" },
+    { pl:"wyzdrowiec ", en:"recover", cat:"better" },
+    { pl:"operacja chirurgiczna", en:"surgery", cat:"better" },
+    { pl:"objaw", en:"symptom", cat:"better" },
+    { pl:"brac witaminy", en:"take vitamins", cat:"better" },
+    { pl:"leczyc ", en:"treat", cat:"better" },
 
 
 
-        // Weather
-        { pl: "jakość powietrza", en: "air quality", cat: "climate" },
-        { pl: "biodegradowalny", en: "biodegradable", cat: "climate" },
-        { pl: "bioroznorodnosc", en: "biodiveristy", cat: "climate" },
-        { pl: "ślad węglowy", en: "carbon footprint", cat: "climate" },
-        { pl: "wilgotność", en: "humidity", cat: "climate" },
-        { pl: "ulewa", en: "downpour", cat: "climate" },
-        { pl: "prognoza pogody", en: "weather forecast", cat: "climate" },
-        { pl: "umiarkowny", en: "temperate", cat: "climate" },
-        { pl: "uprawy", en: "crops", cat: "climate" },
-        { pl: "ponury", en: "gloomy", cat: "climate" },
-        { pl: "polkula", en: "hemisphere", cat: "climate" },
-        { pl: "nieprzewidywalny", en: "unpredictable", cat: "climate" },
-        { pl: "sezonowy", en: "seasonal", cat: "climate" },
-        { pl: "ekosystem", en: "ecosystem", cat: "climate" },
-        { pl: "zmienny", en: "changeable", cat: "climate" },
+    // Outbreaks
+    { pl:"mnostwo", en:"abundance", cat:"outbreaks" },
+    { pl:"zarazliwy", en:"contagious", cat:"outbreaks" },
+    { pl:"dziesiatkowac", en:"decimate ", cat:"outbreaks" },
+    { pl:"pchla", en:"flea", cat:"outbreaks" },
+    { pl:"zarazac", en:"infect", cat:"outbreaks" },
+    { pl:"wybuch,epidemia", en:"outbreak", cat:"outbreaks" },
+    { pl:"prowiant", en:"provisions", cat:"outbreaks" },
+    { pl:"mieszkac", en:"reside", cat:"outbreaks" },
+    { pl:"szczepic", en:"vaccinate", cat:"outbreaks" },
+    { pl:"zajadlosc", en:"virulence", cat:"outbreaks" },
 
-
-        
+    // Managing Emotions
+    { pl:"dolegliwosc", en:"aches and pains", cat:"emotions" },
+    { pl:"artetyzm", en:"arhritis", cat:"emotions" },
+    { pl:"astma", en:"astmha", cat:"emotions" },
+    { pl:"siniaki", en:"bruises", cat:"emotions" },
+     { pl:"nowotwor", en:"cancer", cat:"emotions" },
+     { pl:"wylew", en:"stroke ", cat:"emotions" },
     
+
+
+    // Conversation
+    { pl:"antybiotyki ", en:"antiobiotics", cat:"conversation" },
+    { pl:"srodek przeciwhistaminowy", en:"anitihistamine", cat:"conversation" },
+    { pl:"bandaz", en:"bandage", cat:"conversation" },
+    { pl:"lek na kaszel", en:"cough medicine", cat:"conversation" },
+    { pl:"krem", en:"cream", cat:"conversation" },
+    { pl:"plyn", en:"liquid", cat:"conversation" },
+    { pl:"lek przeciwbolowy", en:"painkiller", cat:"conversation" },
+    { pl:"plaster", en:"plaster", cat:"conversation" },
+    { pl:"pastylki do ssania na gardlo", en:"throat sweet", cat:"conversation" },
+
+
+    // Scientific
+    { pl:"antybiotyki", en:"antibiotics", cat:"scientific" },
+    { pl:"DNA", en:"DNA", cat:"scientific" },
+    { pl:"mikroskop", en:"microscope", cat:"scientific" },
+    { pl:"protez", en:"prosthetics", cat:"scientific" },
+    { pl:"szczepionka", en:"vaccination", cat:"scientific" },
+    { pl:"przeswietlenie ", en:"X-ray", cat:"scientific" },
+    { pl:"wypalenie zawodowe", en:"burnout", cat:"scientific" },
+    { pl:"zapamietana lista rzeczy do zrobieonia", en:"mental to-do list", cat:"scientific" },
+    { pl:"dobrze sie rozwijac", en:"thrive", cat:"scientific" },
+    { pl:"dobre samopoczucie", en:"well-being", cat:"scientific" },
+    { pl:"wyspany", en:"well rested", cat:"scientific" },
+    { pl:"rownonwaga meidzyz yciem zawodowym a prywatnym", en:"work life balance", cat:"scientific" },
+    { pl:"uzalezniony", en:"addicted", cat:"scientific" },
+    { pl:"apetyt ", en:"appedite", cat:"scientific" },
+    { pl:"ograniczac", en:"cut down", cat:"scientific" },
+    { pl:"eliminowac", en:"eliminate", cat:"scientific" },
+    { pl:"ulec pokusie", en:"give in to temptation", cat:"scientific" },
+    { pl:"ograniczona dieta", en:"restricted diet", cat:"scientific" },
+
+
+    // Food Products
+    { pl:"przeciwutleniacze", en:"antioxidiants", cat:"products" },
+    { pl:"blonnik", en:"fibre", cat:"products" },
+    { pl:"gluten", en:"gluten", cat:"products" },
+    { pl:"zdrowe tluszcze", en:"healthy fats", cat:"products" },
+    { pl:"skladniki odzywcze", en:"nutrients", cat:"products" },
+    { pl:"organiczny", en:"organic", cat:"products" },
+    { pl:"suplementy", en:"supplements", cat:"products" },
+    { pl:"witamini i mineraly", en:"vitamins and minerals ", cat:"products" },
+    { pl:"pozne sniadanie", en:"brunch ", cat:"products" },
+    { pl:"drugie sniadanie", en:"elevenses", cat:"products" },
+    { pl:"podgrzac ", en:"heat up", cat:"products" },
+    { pl:"mierzyc", en:"measure", cat:"products" },
+    { pl:"kuchenka mikrofalowa", en:"microwave", cat:"products" },
+    { pl:"przerwa na herbate", en:"tea break", cat:"products" },
+    { pl:"aerobik", en:"aerobics", cat:"products" },
+    { pl:"elastyczny", en:"flexible", cat:"products" },
+    { pl:"schudnac", en:"lose weight", cat:"products" },
+    { pl:"wytrzynalosc", en:"stamina", cat:"products" },
+    { pl:"wzmacniac", en:"strengthen", cat:"products" },
+    { pl:"rozciagac sie", en:"stretch", cat:"products" },
+    
+
 ];
 
-let list = [];
-let index = 0;
-let correct = 0;
-let wrong = 0;
+let quizList = [];
+let current = 0;
+let score = 0;
+let mistakes = [];
 
-function resetGame() {
-    const cat = document.getElementById("category").value;
+function startQuiz(category){
 
-    list = (cat === "all")
-        ? [...vocabulary]
-        : vocabulary.filter(v => v.cat === cat);
+    if(category === "all"){
+        quizList = vocabulary.filter(v => v.pl && v.en);
+    } else {
+        quizList = vocabulary.filter(v => v.cat === category && v.pl && v.en);
+    }
 
-    list.sort(() => Math.random() - 0.5);
+    quizList.sort(() => Math.random() - 0.5);
 
-    index = 0;
-    correct = 0;
-    wrong = 0;
+    current = 0;
+    score = 0;
+    mistakes = [];
 
-    update();
+    document.getElementById("categoryScreen").classList.add("hidden");
+    document.getElementById("quizScreen").classList.remove("hidden");
+
     showWord();
-
-    document.getElementById("feedback").innerText = "";
 }
 
-function showWord() {
-    if (index >= list.length) {
-        endGame();
+function showWord(){
+    if(current >= quizList.length){
+        finishQuiz();
         return;
     }
 
-    document.getElementById("polishWord").innerText = list[index].pl;
-    document.getElementById("input").value = "";
+    document.getElementById("progress").innerText =
+        `Słówko ${current+1} / ${quizList.length}`;
+
+    document.getElementById("word").innerText = quizList[current].pl;
+    document.getElementById("answer").value = "";
+    document.getElementById("feedback").innerText = "";
 }
 
-function checkAnswer() {
-    if (index >= list.length) return;
+function checkAnswer(){
+    const user = document.getElementById("answer").value.trim();
+    const correct = quizList[current].en;
 
-    const user = document.getElementById("input").value.trim().toLowerCase();
-    const correctAns = list[index].en.toLowerCase();
-
-    if (user === correctAns) {
+    if(user.toLowerCase() === correct.toLowerCase()){
+        score++;
         document.getElementById("feedback").innerText = "✔ Dobrze!";
-        document.getElementById("feedback").className = "correct";
-        correct++;
     } else {
-        document.getElementById("feedback").innerText = "✖ " + list[index].en;
-        document.getElementById("feedback").className = "wrong";
-        wrong++;
+        mistakes.push({
+            pl: quizList[current].pl,
+            your: user || "(brak)",
+            correct: correct
+        });
+        document.getElementById("feedback").innerText = "✖ " + correct;
     }
 
-    update();
-    index++;
-    setTimeout(showWord, 800);
+    current++;
+    setTimeout(showWord, 900);
 }
 
-function update() {
-    document.getElementById("correct").innerText = correct;
-    document.getElementById("wrong").innerText = wrong;
+function finishQuiz(){
+    document.getElementById("quizScreen").classList.add("hidden");
+    document.getElementById("resultScreen").classList.remove("hidden");
+
+    document.getElementById("score").innerText =
+        `${score} / ${quizList.length}`;
+
+    let html = "";
+
+    if(mistakes.length === 0){
+        html = "<p>Brak błędów 🎉</p>";
+    } else {
+        html += `
+        <div class="error-row">
+            <span class="polish-word">Polski</span>
+            <span class="user-answer">Twoja odpowiedź</span>
+            <span class="correct-answer">Poprawnie</span>
+        </div>
+        `;
+
+        mistakes.forEach(m => {
+            html += `
+            <div class="error-row">
+                <span class="polish-word">${m.pl}</span>
+                <span class="user-answer">${m.your}</span>
+                <span class="correct-answer">${m.correct}</span>
+            </div>`;
+        });
+    }
+
+    document.getElementById("errorsList").innerHTML = html;
 }
 
-function endGame() {
-    document.getElementById("polishWord").innerText = "Koniec!";
-    document.getElementById("input").style.display = "none";
-    document.querySelector("button[onclick='checkAnswer()']").style.display = "none";
-    document.querySelector("button[onclick='nextWord()']").style.display = "none";
-
-    document.getElementById("feedback").innerHTML =
-        `Twój wynik: ${correct} / ${list.length}`;
-
-    // przycisk restartu
-    const btn = document.createElement("button");
-    btn.innerText = "🔁 Zrób ponownie";
-    btn.onclick = () => location.reload();
-    document.querySelector(".container").appendChild(btn);
+function goHome(){
+    document.getElementById("resultScreen").classList.add("hidden");
+    document.getElementById("categoryScreen").classList.remove("hidden");
 }
 
-document.getElementById("input").addEventListener("keypress", e => {
-    if (e.key === "Enter") checkAnswer();
+document.getElementById("answer").addEventListener("keypress", e=>{
+    if(e.key === "Enter") checkAnswer();
 });
-
-resetGame();
 
 </script>
 
