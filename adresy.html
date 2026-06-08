@@ -240,38 +240,60 @@
             • Klasa D: od 224 do 239 (bity startowe: 1110)
         </div>
     </div>
-</div>
+
     <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #e0e0e0;">
-    <a href="index.html" style="
-        display: inline-block;
-        text-decoration: none;
-        background-color: #7f8c8d;
-        color: white;
-        padding: 10px 20px;
-        font-size: 15px;
-        font-family: 'Segoe UI', sans-serif;
-        font-weight: 500;
-        border-radius: 6px;
-        transition: background 0.3s;
-    " onmouseover="this.style.backgroundColor='#95a5a6'" onmouseout="this.style.backgroundColor='#7f8c8d'">
-        &larr; Powrót do Strony Głównej
-    </a>
+        <a href="index.html" style="
+            display: inline-block;
+            text-decoration: none;
+            background-color: #7f8c8d;
+            color: white;
+            padding: 10px 20px;
+            font-size: 15px;
+            font-family: 'Segoe UI', sans-serif;
+            font-weight: 500;
+            border-radius: 6px;
+            transition: background 0.3s;
+        " onmouseover="this.style.backgroundColor='#95a5a6'" onmouseout="this.style.backgroundColor='#7f8c8d'">
+            &larr; Powrót do Strony Głównej
+        </a>
+    </div>
 </div>
 
 <script>
     let currentMode = '';
     let currentIdx = 0;
     let score = 0;
-    const totalQuestions = 10; // Każda seria to 10 unikalnych, losowych losowań adresów IP
+    const totalQuestions = 10; 
     let ipQuestionsArray = [];
 
-    // Generator w pełni losowych adresów IPv4
+    // Inteligentny generator: daje równe szanse (50/50) na adres prywatny i publiczny
     function generateRandomIP() {
-        const octet1 = Math.floor(Math.random() * 239) + 1; // Generuje od 1 do 239 (Klasy A-D)
-        const octet2 = Math.floor(Math.random() * 256);
-        const octet3 = Math.floor(Math.random() * 256);
-        const octet4 = Math.floor(Math.random() * 256);
-        return `${octet1}.${octet2}.${octet3}.${octet4}`;
+        const rzucMoneta = Math.random() < 0.5;
+
+        if (rzucMoneta) {
+            // GENERUJEMY ADRES PRYWATNY (RFC 1918)
+            const pulePrywatne = ['A', 'B', 'C'];
+            const wylosowanaPula = pulePrywatne[Math.floor(Math.random() * pulePrywatne.length)];
+
+            if (wylosowanaPula === 'A') {
+                return `10.${Math.floor(Math.random() * 256)}.${Math.floor(Math.random() * 256)}.${Math.floor(Math.random() * 256)}`;
+            } else if (wylosowanaPula === 'B') {
+                const o2 = Math.floor(Math.random() * (31 - 16 + 1)) + 16;
+                return `172.${o2}.${Math.floor(Math.random() * 256)}.${Math.floor(Math.random() * 256)}`;
+            } else {
+                return `192.168.${Math.floor(Math.random() * 256)}.${Math.floor(Math.random() * 256)}`;
+            }
+        } else {
+            // GENERUJEMY ADRES PUBLICZNY (Klasy A-D)
+            let o1 = Math.floor(Math.random() * 239) + 1;
+            
+            // Ochrona przed przypadkowym wylosowaniem prywatnego adresu jako publiczny
+            if (o1 === 10) o1 = 11;
+            if (o1 === 172) o1 = 173;
+            if (o1 === 192) o1 = 193;
+
+            return `${o1}.${Math.floor(Math.random() * 256)}.${Math.floor(Math.random() * 256)}.${Math.floor(Math.random() * 256)}`;
+        }
     }
 
     // Sprawdzanie czy IP pasuje do puli prywatnej
@@ -303,7 +325,6 @@
         score = 0;
         ipQuestionsArray = [];
 
-        // Generowanie 10 losowych adresów IP do bazy pytań na tę rundę
         for (let i = 0; i < totalQuestions; i++) {
             ipQuestionsArray.push(generateRandomIP());
         }
@@ -345,7 +366,6 @@
             choices = ["Klasa A", "Klasa B", "Klasa C", "Klasa D"];
         }
 
-        // Renderowanie opcji jako duże, wygodne przyciski
         choices.forEach(choice => {
             const button = document.createElement("button");
             button.className = "option";
