@@ -266,28 +266,32 @@
     const totalQuestions = 10; 
     let ipQuestionsArray = [];
 
-    // Inteligentny generator: daje równe szanse (50/50) na adres prywatny i publiczny
+    // NOWY GENERATOR: Rygorystyczny podział 50% szans na prywatny / 50% na publiczny
     function generateRandomIP() {
-        const rzucMoneta = Math.random() < 0.5;
+        // KROK 1: Losujemy typ adresu (Prywatny lub Publiczny)
+        const wylosujPrywatny = Math.random() < 0.5;
 
-        if (rzucMoneta) {
-            // GENERUJEMY ADRES PRYWATNY (RFC 1918)
-            const pulePrywatne = ['A', 'B', 'C'];
-            const wylosowanaPula = pulePrywatne[Math.floor(Math.random() * pulePrywatne.length)];
+        if (wylosujPrywatny) {
+            // KROK 2A: Losujemy podklasę prywatną (A, B lub C)
+            const klasyPrywatne = ['A', 'B', 'C'];
+            const wybranaKlasa = klasyPrywatne[Math.floor(Math.random() * klasyPrywatne.length)];
 
-            if (wylosowanaPula === 'A') {
+            if (wybranaKlasa === 'A') {
+                // Klasa A prywatna: zawsze 10.X.X.X
                 return `10.${Math.floor(Math.random() * 256)}.${Math.floor(Math.random() * 256)}.${Math.floor(Math.random() * 256)}`;
-            } else if (wylosowanaPula === 'B') {
+            } else if (wybranaKlasa === 'B') {
+                // Klasa B prywatna: od 172.16.X.X do 172.31.X.X
                 const o2 = Math.floor(Math.random() * (31 - 16 + 1)) + 16;
                 return `172.${o2}.${Math.floor(Math.random() * 256)}.${Math.floor(Math.random() * 256)}`;
             } else {
+                // Klasa C prywatna: zawsze 192.168.X.X
                 return `192.168.${Math.floor(Math.random() * 256)}.${Math.floor(Math.random() * 256)}`;
             }
         } else {
-            // GENERUJEMY ADRES PUBLICZNY (Klasy A-D)
-            let o1 = Math.floor(Math.random() * 239) + 1;
+            // KROK 2B: Generujemy adres publiczny, upewniając się, że nie wejdzie w pule RFC 1918
+            let o1 = Math.floor(Math.random() * 239) + 1; // Zakres klas A-D
             
-            // Ochrona przed przypadkowym wylosowaniem prywatnego adresu jako publiczny
+            // Filtrowanie wykluczające konflikty z początkami klas prywatnych
             if (o1 === 10) o1 = 11;
             if (o1 === 172) o1 = 173;
             if (o1 === 192) o1 = 193;
@@ -296,7 +300,7 @@
         }
     }
 
-    // Sprawdzanie czy IP pasuje do puli prywatnej
+    // Weryfikacja typu adresu
     function checkIsPrivate(ipStr) {
         const octets = ipStr.split('.').map(Number);
         const o1 = octets[0];
@@ -309,7 +313,7 @@
         return false;
     }
 
-    // Wyznaczanie klasy tradycyjnej na podstawie pierwszego oktetu
+    // Weryfikacja klasy adresu
     function determineClass(ipStr) {
         const firstOctet = Number(ipStr.split('.')[0]);
         if (firstOctet >= 1 && firstOctet <= 127) return "Klasa A";
