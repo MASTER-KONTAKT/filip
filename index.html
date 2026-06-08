@@ -3,614 +3,398 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reporting Verbs Master Pro</title>
+    <title>Quiz: Protokoły Sieciowe i Porty</title>
     <style>
         :root {
-            --bg-color: #08080c;
-            --panel-bg: rgba(20, 20, 27, 0.85);
-            --border-color: rgba(255, 255, 255, 0.06);
-            --text-main: #f3f4f6;
-            --text-muted: #9ca3af;
-            
-            --accent-a: #00f2fe; 
-            --accent-b: #4facfe; 
-            --accent-c: #ffb347; 
-            --accent-d: #b154f6; 
-            
-            --gradient-sticker: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            --primary: #2b5c8f;
+            --secondary: #4a90e2;
+            --bg: #f4f7f6;
+            --card-bg: #ffffff;
+            --text: #333333;
+            --correct: #2ecc71;
+            --incorrect: #e74c3c;
+            --border: #e0e0e0;
         }
 
         body {
-            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            min-height: 100vh;
-            padding: 30px 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            overflow-x: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
         }
 
-        header {
-            text-align: center;
-            margin-bottom: 30px;
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
         }
 
         h1 {
-            font-size: 2.6rem;
-            font-weight: 800;
-            letter-spacing: -1px;
-            background: linear-gradient(to right, #00f2fe, #b154f6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 8px;
+            text-align: center;
+            color: var(--primary);
+            margin-bottom: 30px;
+            font-size: 28px;
+            border-bottom: 3px solid var(--secondary);
+            padding-bottom: 10px;
         }
 
-        .subtitle {
-            color: var(--text-muted);
-            font-size: 0.95rem;
-        }
-
-        /* MENU GŁÓWNE */
-        nav {
+        .quiz-modes {
             display: flex;
-            background: var(--panel-bg);
-            padding: 6px;
-            border-radius: 30px;
-            border: 1px solid var(--border-color);
-            margin-bottom: 35px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            flex-wrap: wrap;
             justify-content: center;
-        }
-
-        nav button {
-            background: transparent;
-            border: none;
-            color: var(--text-muted);
-            padding: 10px 20px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            border-radius: 25px;
-            cursor: pointer;
-        }
-
-        nav button.active {
-            background: #ffffff;
-            color: #000000;
-            box-shadow: 0 4px 12px rgba(255,255,255,0.2);
-        }
-
-        .wrapper {
-            width: 100%;
-            max-width: 750px;
-        }
-
-        .view-section {
-            display: none;
-            opacity: 0;
-            transform: translateY(15px);
-        }
-
-        .view-section.active {
-            display: block;
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .card {
-            background: var(--panel-bg);
-            border-radius: 24px;
-            border: 1px solid var(--border-color);
-            padding: 30px;
-            backdrop-filter: blur(20px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-        }
-
-        /* KONTROLKI I OPCJE */
-        .options-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            justify-content: center;
-            margin-bottom: 25px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .opt-btn {
-            background: rgba(255,255,255,0.04);
-            border: 1px solid var(--border-color);
-            color: var(--text-main);
-            padding: 8px 16px;
-            border-radius: 12px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.85rem;
-        }
-
-        .opt-btn.selected {
-            background: rgba(0, 242, 254, 0.12);
-            border-color: var(--accent-a);
-            color: var(--accent-a);
-        }
-
-        .opt-btn.active-toggle {
-            background: rgba(177, 84, 246, 0.15);
-            border-color: var(--accent-d);
-            color: #c07cf7;
-        }
-
-        /* LISTA SŁÓWEK */
-        .group-container {
+            gap: 15px;
             margin-bottom: 30px;
         }
 
-        .group-header {
-            font-size: 1.05rem;
-            font-weight: 700;
-            margin-bottom: 12px;
-            padding-left: 10px;
-            display: flex;
-            align-items: center;
-        }
-        .group-header.hidden-head {
-            display: none !important;
-        }
-        .gh-a { color: var(--accent-a); border-left: 4px solid var(--accent-a); }
-        .gh-b { color: var(--accent-b); border-left: 4px solid var(--accent-b); }
-        .gh-c { color: var(--accent-c); border-left: 4px solid var(--accent-c); }
-        .gh-d { color: var(--accent-d); border-left: 4px solid var(--accent-d); }
-
-        .word-row {
-            display: flex;
-            align-items: center;
-            background: rgba(255,255,255,0.015);
-            border: 1px solid rgba(255,255,255,0.02);
-            border-radius: 12px;
-            padding: 12px 18px;
-            margin-bottom: 6px;
-            gap: 20px; /* Dodatkowy odstęp między kolumnami */
-        }
-
-        .word-cell {
-            flex: 1;
-            font-size: 1rem;
-            position: relative;
-            display: flex;
-            align-items: center;
-            min-height: 32px; /* Stabilna wysokość dla naklejek */
-        }
-
-        /* NAKLEJKI ZASŁANIAJĄCE CAŁOŚĆ */
-        .sticker {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100%; /* Rozciągnięcie na całą szerokość tekstu pod spodem */
-            height: 100%; /* Rozciągnięcie na całą wysokość */
-            background: var(--gradient-sticker);
+        .btn {
+            background-color: var(--primary);
             color: white;
-            border-radius: 8px;
-            font-size: 0.8rem;
-            font-weight: 700;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 6px;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);
-            user-select: none;
-            z-index: 2;
-            display: flex;
-            align-items: center;
-            justify-content: center; /* Wyśrodkowanie napisu na naklejce */
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: background 0.3s, transform 0.1s;
         }
 
-        .sticker.fly-away {
-            animation: flyOut 0.55s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        .btn:hover {
+            background-color: var(--secondary);
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn.active {
+            background-color: #1a3a5f;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background-color: var(--border);
+            border-radius: 4px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background-color: var(--secondary);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .question-box {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        .options-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .option {
+            background-color: #fafafa;
+            border: 2px solid var(--border);
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s ease;
+        }
+
+        .option:hover {
+            background-color: #f0f4f8;
+            border-color: var(--secondary);
+        }
+
+        .option.correct {
+            background-color: rgba(46, 204, 113, 0.15);
+            border-color: var(--correct);
+            color: #1b7a43;
+            font-weight: bold;
+        }
+
+        .option.incorrect {
+            background-color: rgba(231, 76, 60, 0.15);
+            border-color: var(--incorrect);
+            color: #b83227;
+        }
+
+        .option.disabled {
             pointer-events: none;
         }
 
-        @keyframes flyOut {
-            0% { transform: translateY(0) translateX(0) rotate(0deg) scale(1); opacity: 1; }
-            100% { transform: translateY(-120%) translateX(180px) rotate(35deg) scale(0.4); opacity: 0; }
-        }
-
-        /* TRYBY TESTÓW */
-        .center-box {
-            text-align: center;
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 5px 14px;
-            border-radius: 30px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            margin-bottom: 20px;
-            letter-spacing: 0.5px;
-        }
-        .b-a { background: rgba(0, 242, 254, 0.08); color: var(--accent-a); border: 1px solid var(--accent-a); }
-        .b-b { background: rgba(79, 172, 254, 0.08); color: var(--accent-b); border: 1px solid var(--accent-b); }
-        .b-c { background: rgba(255, 179, 71, 0.08); color: var(--accent-c); border: 1px solid var(--accent-c); }
-        .b-d { background: rgba(177, 84, 246, 0.08); color: var(--accent-d); border: 1px solid var(--accent-d); }
-
-        .big-word {
-            font-size: 2.3rem;
-            font-weight: 800;
-            margin-bottom: 25px;
-        }
-
-        .category-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .cat-btn {
-            padding: 18px;
-            border-radius: 16px;
-            font-size: 1.2rem;
-            font-weight: 800;
-            cursor: pointer;
-            background: rgba(255,255,255,0.02);
-            border: 2px solid rgba(255,255,255,0.06);
-            color: #fff;
-        }
-        .cat-btn:hover { transform: scale(1.03); }
-        
-        .cat-btn.btn-a:hover { border-color: var(--accent-a); box-shadow: 0 0 15px rgba(0, 242, 254, 0.3); color: var(--accent-a); }
-        .cat-btn.btn-b:hover { border-color: var(--accent-b); box-shadow: 0 0 15px rgba(79, 172, 254, 0.3); color: var(--accent-b); }
-        .cat-btn.btn-c:hover { border-color: var(--accent-c); box-shadow: 0 0 15px rgba(255, 179, 71, 0.3); color: var(--accent-c); }
-        .cat-btn.btn-d:hover { border-color: var(--accent-d); box-shadow: 0 0 15px rgba(177, 84, 246, 0.3); color: var(--accent-d); }
-
         .feedback {
-            margin-top: 20px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            min-height: 26px;
+            font-size: 16px;
+            margin-bottom: 25px;
+            font-weight: 500;
+            min-height: 24px;
         }
-        .correct { color: #2ecc71; text-shadow: 0 0 10px rgba(46,204,113,0.2); }
-        .incorrect { color: #ff5e62; text-shadow: 0 0 10px rgba(255,94,98,0.2); }
 
-        .streak-holder {
-            display: inline-block;
-            background: rgba(255,255,255,0.03);
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            color: #ffb347;
+        .score-section {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .score-title {
+            font-size: 24px;
             font-weight: bold;
+            color: var(--primary);
             margin-bottom: 15px;
         }
 
-        .action-btn {
-            background: #fff;
-            color: #000;
-            border: none;
-            width: 100%;
-            padding: 15px;
-            border-radius: 14px;
-            font-size: 1.05rem;
-            font-weight: 700;
-            cursor: pointer;
-            margin-top: 20px;
+        .score-display {
+            font-size: 48px;
+            font-weight: 800;
+            color: var(--secondary);
+            margin-bottom: 20px;
         }
-        .action-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(255,255,255,0.2); }
 
-        .flash-correct { animation: flashG 0.4s ease; }
-        .flash-incorrect { animation: flashR 0.4s ease; }
-        @keyframes flashG { 0%, 100% { background-color: var(--bg-color); } 50% { background-color: #052e16; } }
-        @keyframes flashR { 0%, 100% { background-color: var(--bg-color); } 50% { background-color: #450a0a; } }
+        .hidden {
+            display: none !important;
+        }
+
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 25px;
+            font-size: 14px;
+        }
+
+        .summary-table th, .summary-table td {
+            border: 1px solid var(--border);
+            padding: 10px;
+            text-align: left;
+        }
+
+        .summary-table th {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .summary-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>Reporting Verbs Master Pro</h1>
-        <div class="subtitle">Wszystkie 26 czasowników mowy zależnej z Twojej lekcji</div>
-    </header>
-
-    <nav>
-        <button id="tabList" class="active" onclick="setView('list')">📚 Przegląd z naklejkami</button>
-        <button id="tabQuiz" onclick="setView('quiz')">⚡ Test wpisywania</button>
-        <button id="tabGroup" onclick="setView('group')">🎯 Zgadnij Grupę (A, B, C, D)</button>
-    </nav>
-
-    <div class="wrapper">
-        
-        <div id="viewList" class="view-section active card">
-            <div class="options-grid">
-                <button id="btn-en" class="opt-btn selected" onclick="setListMode('en')">Zakryj angielskie</button>
-                <button id="btn-pl" class="opt-btn" onclick="setListMode('pl')">Zakryj polskie</button>
-                <button id="btn-none" class="opt-btn" onclick="setListMode('none')">Odkryj wszystko</button>
-                <button class="opt-btn" style="background: rgba(255,255,255,0.08);" onclick="shuffleListOrder()">🔀 Pomieszaj słówka</button>
-                <button id="toggleHeadBtn" class="opt-btn" onclick="toggleGroupHeaders()">🙈 Ukryj nazwy grup</button>
-            </div>
-            <div id="listOutput"></div>
+<div class="container">
+    <h1>Quiz: Protokoły Sieciowe i Porty</h1>
+    
+    <div id="setup-section">
+        <p style="text-align: center; font-size: 16px; margin-bottom: 20px;">Wybierz tryb pytań, aby rozpocząć naukę:</p>
+        <div class="quiz-modes">
+            <button class="btn" onclick="startQuiz('ports')">Znam porty?</button>
+            <button class="btn" onclick="startQuiz('layers')">Znam warstwy ISO/OSI?</button>
+            <button class="btn" onclick="startQuiz('desc')">Znam opisy protokołów?</button>
         </div>
-
-        <div id="viewQuiz" class="view-section card center-box">
-            <div class="streak-holder">🔥 Seria: <span id="quizStreak">0</span></div>
-            <br>
-            <div id="qBadge" class="badge b-a">Grupa A</div>
-            <div id="qPolish" class="big-word">Słówko</div>
-            
-            <input type="text" id="qInput" placeholder="Wpisz angielskie tłumaczenie..." autocomplete="off">
-            <div id="qFeedback" class="feedback"></div>
-            
-            <button id="qBtn" class="action-btn">Sprawdź odpowiedź</button>
-            <div class="tracker" id="qTracker" style="margin-top:15px; color:var(--text-muted); font-size:0.85rem;">Słówko 1 z 26</div>
-        </div>
-
-        <div id="viewGroup" class="view-section card center-box">
-            <div class="streak-holder">🔥 Seria: <span id="gStreak">0</span></div>
-            <div class="options-grid" style="border:none; margin-bottom:15px;">
-                <button id="gOpt-pl" class="opt-btn selected" onclick="setGroupQuizLang('pl')">Pytaj po polsku</button>
-                <button id="gOpt-en" class="opt-btn" onclick="setGroupQuizLang('en')">Pytaj po angielsku</button>
-            </div>
-            
-            <div style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 10px;">Do której grupy należy słowo:</div>
-            <div id="gQuestionWord" class="big-word" style="color:#fff; margin-bottom: 15px;">Słowo</div>
-            
-            <div id="gFeedback" class="feedback">Wybierz właściwą kategorię poniżej</div>
-
-            <div class="category-grid">
-                <button class="cat-btn btn-a" onclick="answerGroupQuiz('A')">A</button>
-                <button class="cat-btn btn-b" onclick="answerGroupQuiz('B')">B</button>
-                <button class="cat-btn btn-c" onclick="answerGroupQuiz('C')">C</button>
-                <button class="cat-btn btn-d" onclick="answerGroupQuiz('D')">D</button>
-            </div>
-            
-            <button id="gNextBtn" class="action-btn" style="display:none;" onclick="loadGroupQuizQuestion()">Następne słówko ➔</button>
-        </div>
-
     </div>
 
-    <script>
-        const rawData = [
-            { pl: "zgodzić się", en: "agree", g: "A", info: "Grupa A (+ TO)" },
-            { pl: "zaoferować / zaproponować", en: "offer", g: "A", info: "Grupa A (+ TO)" },
-            { pl: "obiecać", en: "promise", g: "A", info: "Grupa A lub D" },
-            { pl: "odmówić", en: "refuse", g: "A", info: "Grupa A (+ TO)" },
-            { pl: "grozić / straszyć", en: "threaten", g: "A", info: "Grupa A (+ TO)" },
-            
-            { pl: "radzić / doradzać", en: "advise", g: "B", info: "Grupa B (+ OSOBA + TO)" },
-            { pl: "prosić", en: "ask", g: "B", info: "Grupa B (+ OSOBA + TO)" },
-            { pl: "błagać", en: "beg", g: "B", info: "Grupa B (+ OSOBA + TO)" },
-            { pl: "rozkazywać (c...)", en: "command", g: "B", info: "Grupa B (+ OSOBA + TO)" },
-            { pl: "zaprosić", en: "invite", g: "B", info: "Grupa B (+ OSOBA + TO)" },
-            { pl: "rozkazać / nakazać (o...)", en: "order", g: "B", info: "Grupa B (+ OSOBA + TO)" },
-            { pl: "przypomnieć", en: "remind", g: "B", info: "Grupa B (+ OSOBA + TO)" },
-            { pl: "ostrzec", en: "warn", g: "B", info: "Grupa B (+ OSOBA + TO)" },
-            
-            { pl: "przyznać się", en: "admit", g: "C", info: "Grupa C (+ -ING)" },
-            { pl: "zaprzeczyć", en: "deny", g: "C", info: "Grupa C lub D" },
-            { pl: "sugerować / proponować", en: "suggest", g: "C", info: "Grupa C lub D" },
-            { pl: "oskarżyć kogoś o", en: "accuse", g: "C", info: "Grupa C (+ OF + -ING)" },
-            { pl: "przeprosić za", en: "apologise", g: "C", info: "Grupa C (+ FOR + -ING)" },
-            { pl: "przechwalać się czymś", en: "boast", g: "C", info: "Grupa C (+ ABOUT/OF)" },
-            { pl: "skarżyć się / narzekać komuś", en: "complain", g: "C", info: "Grupa C (+ TO... ABOUT)" },
-            { pl: "nalegać na", en: "insist", g: "C", info: "Grupa C (+ ON + -ING)" },
-            
-            { pl: "twierdzić / utrzymywać (że)", en: "claim", g: "D", info: "Grupa D (+ THAT)" },
-            { pl: "narzekać (że)", en: "complain", g: "D", info: "Grupa D (+ THAT)" },
-            { pl: "wyjasnić (że)", en: "explain", g: "D", info: "Grupa D (+ THAT)" },
-            { pl: "wykrzyknąć / zauważyć (że)", en: "exclaim", g: "D", info: "Grupa D (+ THAT)" },
-            { pl: "zauważyć / skomentować (r...)", en: "remark", g: "D", info: "Grupa D (+ THAT)" }
-        ];
-
-        const groupNames = {
-            A: "GRUPA A: Czasownik + TO + bezokolicznik",
-            B: "GRUPA B: Czasownik + OSOBA + TO",
-            C: "GRUPA C: Czasownik + -ING (Gerund / Przyimki)",
-            D: "GRUPA D: Czasownik + THAT + całe zdanie"
-        };
-
-        let activeList = JSON.parse(JSON.stringify(rawData));
-        let currentListMode = 'en';
-        let hideHeaders = false;
-
-        function setView(view) {
-            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.view-section').forEach(s => { s.classList.remove('active'); s.style.display = 'none'; });
-
-            if (view === 'list') {
-                document.getElementById('tabList').classList.add('active');
-                document.getElementById('viewList').style.display = 'block';
-                setTimeout(() => document.getElementById('viewList').classList.add('active'), 50);
-            } else if (view === 'quiz') {
-                document.getElementById('tabQuiz').classList.add('active');
-                document.getElementById('viewQuiz').style.display = 'block';
-                setTimeout(() => document.getElementById('viewQuiz').classList.add('active'), 50);
-                startQuizMode();
-            } else if (view === 'group') {
-                document.getElementById('tabGroup').classList.add('active');
-                document.getElementById('viewGroup').style.display = 'block';
-                setTimeout(() => document.getElementById('viewGroup').classList.add('active'), 50);
-                startGroupMode();
-            }
-        }
-
-        function setListMode(mode) {
-            currentListMode = mode;
-            document.querySelectorAll('.options-grid .opt-btn').forEach(b => { if(b.id) b.classList.remove('selected') });
-            document.getElementById(`btn-${mode}`).classList.add('selected');
-            buildStickerView();
-        }
-
-        function shuffleListOrder() {
-            activeList.sort(() => Math.random() - 0.5);
-            buildStickerView();
-        }
-
-        function toggleGroupHeaders() {
-            hideHeaders = !hideHeaders;
-            document.getElementById('toggleHeadBtn').classList.toggle('active-toggle', hideHeaders);
-            buildStickerView();
-        }
-
-        function buildStickerView() {
-            const out = document.getElementById('listOutput');
-            out.innerHTML = '';
-
-            if (!hideHeaders && (activeList.length === rawData.length)) {
-                for (let grKey in groupNames) {
-                    const block = document.createElement('div');
-                    block.className = 'group-container';
-                    block.innerHTML = `<div class="group-header gh-${grKey.toLowerCase()}">${groupNames[grKey]}</div>`;
-                    
-                    rawData.filter(w => w.g === grKey).forEach(w => block.appendChild(createRowMarkup(w)));
-                    out.appendChild(block);
-                }
-            } else {
-                const block = document.createElement('div');
-                block.className = 'group-container';
-                if(!hideHeaders) {
-                    block.innerHTML = `<div class="group-header" style="color:var(--text-muted); border-left:4px solid #fff;">Pomieszane słówka (Wszystkie grupy połączone)</div>`;
-                }
-                activeList.forEach(w => block.appendChild(createRowMarkup(w)));
-                out.appendChild(block);
-            }
-        }
-
-        function createRowMarkup(w) {
-            const row = document.createElement('div');
-            row.className = 'word-row';
-            const cellPl = document.createElement('div'); cellPl.className = 'word-cell';
-            const cellEn = document.createElement('div'); cellEn.className = 'word-cell';
-
-            if (currentListMode === 'pl') {
-                cellPl.innerHTML = `<span class="sticker" onclick="animateSticker(this)">UKRYTE</span><span>${w.pl}</span>`;
-                cellEn.textContent = w.en;
-            } else if (currentListMode === 'en') {
-                cellPl.textContent = w.pl;
-                cellEn.innerHTML = `<span class="sticker" onclick="animateSticker(this)">UKRYTE</span><span>${w.en}</span>`;
-            } else {
-                cellPl.textContent = w.pl;
-                cellEn.textContent = w.en;
-            }
-            row.appendChild(cellPl); row.appendChild(cellEn);
-            return row;
-        }
-
-        function animateSticker(el) {
-            el.classList.add('fly-away');
-            setTimeout(() => el.remove(), 550);
-        }
-
-        // QUIZ WPISYWANY
-        let qPool = [], qIdx = 0, qStreak = 0, qIsDone = false;
+    <div id="quiz-section" class="hidden">
+        <div class="progress-bar">
+            <div id="progress" class="progress"></div>
+        </div>
         
-        function startQuizMode() {
-            qPool = [...rawData].sort(() => Math.random() - 0.5);
-            qIdx = 0;
-            loadQuizItem();
+        <div id="question-num" style="font-size: 14px; color: #777; margin-bottom: 5px;"></div>
+        <div id="question" class="question-box"></div>
+        <div id="options" class="options-container"></div>
+        
+        <div id="feedback" class="feedback"></div>
+        <button id="next-btn" class="btn hidden" onclick="nextQuestion()">Następne pytanie &rarr;</button>
+    </div>
+
+    <div id="score-section" class="score-section hidden">
+        <div class="score-title">Koniec Quizu!</div>
+        <div id="score-display" class="score-display">0 / 0</div>
+        <div id="score-pct" style="font-size: 18px; margin-bottom: 30px;"></div>
+        <button class="btn" onclick="resetQuiz()">Zagraj ponownie</button>
+        
+        <h3 style="margin-top: 40px; text-align: left; color: var(--primary);">Ściąga z protokołów (Twoja baza):</h3>
+        <table class="summary-table" id="reference-table">
+            <thead>
+                <tr>
+                    <th>Protokół</th>
+                    <th>Port(y)</th>
+                    <th>Warstwa ISO/OSI</th>
+                    <th>Opis</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    const protocolData = [
+        { name: "HTTP", ports: "80 TCP", layer: "Aplikacji", desc: "Nieszyfrowane strony WWW" },
+        { name: "HTTPS", ports: "443 TCP", layer: "Aplikacji", desc: "Szyfrowane strony WWW (HTTP + SSL/TLS)" },
+        { name: "FTP", ports: "20, 21 TCP", layer: "Aplikacji", desc: "Transfer plików (21 – komendy, 20 – dane)" },
+        { name: "SSH", ports: "22 TCP", layer: "Aplikacji", desc: "Bezpieczne logowanie zdalne" },
+        { name: "Telnet", ports: "23 TCP", layer: "Aplikacji", desc: "Logowanie zdalne (nieszyfrowane)" },
+        { name: "SMTP", ports: "25 TCP", layer: "Aplikacji", desc: "Wysyłanie e-maili" },
+        { name: "DNS", ports: "53 TCP/UDP", layer: "Aplikacji", desc: "Zamiana nazw domen na adresy IP" },
+        { name: "DHCP", ports: "67, 68 UDP", layer: "Aplikacji", desc: "Automatyczna konfiguracja IP" },
+        { name: "POP3", ports: "110 TCP", layer: "Aplikacji", desc: "Odbieranie e-maili" },
+        { name: "IMAP", ports: "143 TCP", layer: "Aplikacji", desc: "Odbieranie e-maili z zarządzaniem folderami" },
+        { name: "SNMP", ports: "161 UDP", layer: "Aplikacji", desc: "Zarządzanie i monitorowanie sieci" },
+        { name: "LDAP", ports: "389 TCP", layer: "Aplikacji", desc: "Usługi katalogowe (np. Active Directory)" },
+        { name: "TCP", ports: "-", layer: "Transportowa", desc: "Niezawodny, połączeniowy protokół z kontrolą przepływu" },
+        { name: "UDP", ports: "-", layer: "Transportowa", desc: "Szybki, bezpołączeniowy protokół (np. do streamingu, VoIP)" },
+        { name: "IP (v4/v6)", ports: "-", layer: "Sieciowa", desc: "Adresacja logiczna i routing pakietów" },
+        { name: "ICMP", ports: "-", layer: "Sieciowa", desc: "Diagnostyka sieci (np. polecenie ping)" },
+        { name: "ARP", ports: "-", layer: "Łącza Danych", desc: "Mapowanie adresów IP na adresy MAC" }
+    ];
+
+    let currentMode = '';
+    let questions = [];
+    let currentIdx = 0;
+    let score = 0;
+
+    // Populate reference table at the start
+    const tbody = document.querySelector("#reference-table tbody");
+    protocolData.forEach(p => {
+        const row = document.createElement("tr");
+        row.innerHTML = `<td><strong>${p.name}</strong></td><td>${p.ports}</td><td>${p.layer}</td><td>${p.desc}</td>`;
+        tbody.appendChild(row);
+    });
+
+    function shuffle(array) {
+        return array.sort(() => Math.random() - 0.5);
+    }
+
+    function startQuiz(mode) {
+        currentMode = mode;
+        questions = [...protocolData];
+        shuffle(questions);
+        currentIdx = 0;
+        score = 0;
+
+        document.getElementById("setup-section").classList.add("hidden");
+        document.getElementById("score-section").classList.add("hidden");
+        document.getElementById("quiz-section").classList.remove("hidden");
+
+        showQuestion();
+    }
+
+    function showQuestion() {
+        document.getElementById("next-btn").classList.add("hidden");
+        document.getElementById("feedback").innerText = "";
+        
+        const qNum = document.getElementById("question-num");
+        const qBox = document.getElementById("question");
+        const optionsBox = document.getElementById("options");
+        const progress = document.getElementById("progress");
+
+        qNum.innerText = `Pytanie ${currentIdx + 1} z ${questions.length}`;
+        progress.style.width = `${(currentIdx / questions.length) * 100}%`;
+
+        const currentProto = questions[currentIdx];
+        let questionText = "";
+        let correctAnswer = "";
+        let allAnswers = [];
+
+        if (currentMode === 'ports') {
+            questionText = `Jaki port (lub porty) oraz protokół transportowy przypisany jest do: ${currentProto.name}?`;
+            correctAnswer = currentProto.ports;
+            allAnswers = [...new Set(protocolData.map(p => p.ports))];
+        } else if (currentMode === 'layers') {
+            questionText = `W której warstwie modelu ISO/OSI działa protokół: ${currentProto.name}?`;
+            correctAnswer = currentProto.layer;
+            allAnswers = [...new Set(protocolData.map(p => p.layer))];
+        } else if (currentMode === 'desc') {
+            questionText = `Wskaż poprawny opis działania dla protokołu: ${currentProto.name}`;
+            correctAnswer = currentProto.desc;
+            allAnswers = [...new Set(protocolData.map(p => p.desc))];
         }
 
-        function loadQuizItem() {
-            if(qIdx >= qPool.length) qIdx = 0;
-            const item = qPool[qIdx];
-            document.getElementById('qBadge').textContent = `Grupa ${item.g}`;
-            document.getElementById('qBadge').className = `badge b-${item.g.toLowerCase()}`;
-            document.getElementById('qPolish').textContent = item.pl;
-            document.getElementById('qInput').value = '';
-            document.getElementById('qFeedback').textContent = '';
-            document.getElementById('qBtn').textContent = 'Sprawdź odpowiedź';
-            document.getElementById('qTracker').textContent = `Słówko ${qIdx + 1} z ${qPool.length}`;
-            qIsDone = false;
+        qBox.innerText = questionText;
+        optionsBox.innerHTML = "";
+
+        // Filter and get 4 unique options (including correct answer)
+        let choices = [correctAnswer];
+        shuffle(allAnswers);
+        for (let ans of allAnswers) {
+            if (choices.length < 4 && ans !== correctAnswer) {
+                choices.push(ans);
+            }
         }
+        shuffle(choices);
 
-        document.getElementById('qBtn').addEventListener('click', () => {
-            if(!qIsDone) {
-                const user = document.getElementById('qInput').value.trim().toLowerCase();
-                const correct = qPool[qIdx].en.toLowerCase();
-                const fb = document.getElementById('qFeedback');
-                
-                if(user === '') return;
+        choices.forEach(choice => {
+            const button = document.createElement("button");
+            button.className = "option";
+            button.innerText = choice;
+            button.onclick = () => checkAnswer(button, choice, correctAnswer);
+            optionsBox.appendChild(button);
+        });
+    }
 
-                if(user === correct) {
-                    fb.textContent = "✔ Pięknie! Czyste trafienie."; fb.className = "feedback correct";
-                    qStreak++; document.body.classList.add('flash-correct');
-                } else {
-                    fb.textContent = `❌ Błąd. Prawidłowo to: ${qPool[qIdx].en}`; fb.className = "feedback incorrect";
-                    qStreak = 0; document.body.classList.add('flash-incorrect');
-                }
-                document.getElementById('quizStreak').textContent = qStreak;
-                document.getElementById('qBtn').textContent = 'Dalej ➔';
-                qIsDone = true;
-                setTimeout(() => { document.body.className = ''; }, 400);
-            } else {
-                qIdx++; loadQuizItem();
-                document.getElementById('qInput').focus();
+    function checkAnswer(selectedButton, chosen, correct) {
+        const options = document.querySelectorAll(".option");
+        options.forEach(opt => {
+            opt.classList.add("disabled");
+            if (opt.innerText === correct) {
+                opt.classList.add("correct");
             }
         });
 
-        document.getElementById('qInput').addEventListener('keypress', (e) => { if(e.key === 'Enter') document.getElementById('qBtn').click(); });
-
-        // ZGADNIJ GRUPĘ
-        let gPool = [], gIdx = 0, gLang = 'pl', gStreak = 0, gIsDone = false;
-
-        function setGroupQuizLang(lang) {
-            gLang = lang;
-            document.getElementById('gOpt-pl').classList.toggle('selected', lang === 'pl');
-            document.getElementById('gOpt-en').classList.toggle('selected', lang === 'en');
-            startGroupMode();
+        const feedback = document.getElementById("feedback");
+        if (chosen === correct) {
+            selectedButton.classList.add("correct");
+            feedback.innerHTML = "<span style='color: var(--correct);'>&check; Dobrze! Poprawna odpowiedź.</span>";
+            score++;
+        } else {
+            selectedButton.classList.add("incorrect");
+            feedback.innerHTML = `<span style='color: var(--incorrect);'>&cross; Błąd! Prawidłowa odpowiedź to: <strong>${correct}</strong></span>`;
         }
 
-        function startGroupMode() {
-            gPool = [...rawData].sort(() => Math.random() - 0.5);
-            gIdx = 0;
-            loadGroupQuizQuestion();
+        document.getElementById("next-btn").classList.remove("hidden");
+    }
+
+    function nextQuestion() {
+        currentIdx++;
+        if (currentIdx < questions.length) {
+            showQuestion();
+        } else {
+            showScore();
         }
+    }
 
-        function loadGroupQuizQuestion() {
-            if(gIdx >= gPool.length) gIdx = 0;
-            const item = gPool[gIdx];
-            document.getElementById('gQuestionWord').textContent = (gLang === 'pl') ? item.pl : item.en;
-            document.getElementById('gFeedback').textContent = 'Wybierz właściwą kategorię poniżej';
-            document.getElementById('gFeedback').className = 'feedback';
-            document.getElementById('gNextBtn').style.display = 'none';
-            
-            document.querySelectorAll('.category-grid .cat-btn').forEach(b => {
-                b.style.opacity = '1'; b.style.pointerEvents = 'auto'; b.style.borderColor = '';
-            });
-            gIsDone = false;
-        }
+    function showScore() {
+        document.getElementById("quiz-section").classList.add("hidden");
+        const scoreSec = document.getElementById("score-section");
+        scoreSec.classList.remove("hidden");
 
-        function answerGroupQuiz(chosenLetter) {
-            if(gIsDone) return;
-            gIsDone = true;
+        document.getElementById("score-display").innerText = `${score} / ${questions.length}`;
+        const pct = Math.round((score / questions.length) * 100);
+        
+        let msg = "";
+        if (pct === 100) msg = "Genialnie! Znasz wszystko perfekcyjnie! 🏆";
+        else if (pct >= 80) msg = "Świetny wynik! Egzamin zdany śpiewająco! 🚀";
+        else if (pct >= 50) msg = "Dobra robota, ale warto jeszcze trochę powtórzyć. 📚";
+        else msg = "Musisz jeszcze poćwiczyć. Przejrzyj poniższą tabelę. 🔍";
 
-            const correctLetter = gPool[gIdx].g;
-            const fb = document.getElementById('gFeedback');
+        document.getElementById("score-pct").innerText = `${pct}% - ${msg}`;
+    }
 
-            document.querySelectorAll('.category-grid .cat-btn').forEach(b => b.style.pointerEvents = 'none');
+    function resetQuiz() {
+        document.getElementById("score-section").classList.add("hidden");
+        document.getElementById("setup-section").classList.remove("hidden");
+    }
+</script>
 
-            if(chosenLetter === correctLetter) {
-                fb.textContent = `✔ Doskonale! To jest ${gPool[gIdx].info}`; fb.className = "feedback correct";
-                gStreak++; document.body.classList.add('flash-correct');
-            } else {
-                fb.textContent = `❌ Pudło. To była ${gPool[gIdx].info}`; fb.className = "feedback incorrect";
-                gStreak = 0; document.body.classList.add('flash-incorrect');
-            }
-
-            document.getElementById('gStreak').textContent = gStreak;
-            document.getElementById('gNextBtn').style.display = 'block';
-            setTimeout(() => { document.body.className = ''; }, 400);
-            gIdx++;
-        }
-
-        buildStickerView();
-    </script>
 </body>
 </html>
