@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -252,7 +253,6 @@
 </div>
 
 <script>
-    // Definicje czystych wektorów SVG dla poszczególnych bramek logicznych (zgodne z normą ANSI)
     const svgDrawings = {
         'NOT': `<svg width="160" height="80" viewBox="0 0 160 80"><line x1="20" y1="40" x2="50" y2="40" stroke="black" stroke-width="3"/><polygon points="50,20 50,60 90,40" fill="none" stroke="black" stroke-width="3"/><circle cx="95" cy="40" r="5" fill="none" stroke="black" stroke-width="3"/><line x1="100" y1="40" x2="140" y2="40" stroke="black" stroke-width="3"/><text x="10" y="35" font-family="sans-serif" font-size="14">A</text><text x="145" y="35" font-family="sans-serif" font-size="14">X</text></svg>`,
         'AND': `<svg width="160" height="80" viewBox="0 0 160 80"><line x1="20" y1="25" x2="50" y2="25" stroke="black" stroke-width="3"/><line x1="20" y1="55" x2="50" y2="55" stroke="black" stroke-width="3"/><path d="M50,15 L75,15 A25,25 0 0,1 100,40 A25,25 0 0,1 75,65 L50,65 Z" fill="none" stroke="black" stroke-width="3"/><line x1="100" y1="40" x2="140" y2="40" stroke="black" stroke-width="3"/><text x="10" y="25" font-family="sans-serif" font-size="14">A</text><text x="10" y="60" font-family="sans-serif" font-size="14">B</text><text x="145" y="35" font-family="sans-serif" font-size="14">X</text></svg>`,
@@ -263,7 +263,6 @@
         'XNOR': `<svg width="160" height="80" viewBox="0 0 160 80"><line x1="20" y1="25" x2="43" y2="25" stroke="black" stroke-width="3"/><line x1="20" y1="55" x2="43" y2="55" stroke="black" stroke-width="3"/><path d="M37,15 C47,30 47,50 37,65" fill="none" stroke="black" stroke-width="3"/><path d="M45,15 C55,30 55,50 45,65 C65,65 85,60 105,40 C85,20 65,15 45,15 Z" fill="none" stroke="black" stroke-width="3"/><circle cx="110" cy="40" r="5" fill="none" stroke="black" stroke-width="3"/><line x1="115" y1="40" x2="140" y2="40" stroke="black" stroke-width="3"/><text x="10" y="25" font-family="sans-serif" font-size="14">A</text><text x="10" y="60" font-family="sans-serif" font-size="14">B</text><text x="145" y="35" font-family="sans-serif" font-size="14">X</text></svg>`
     };
 
-    // Logika wykonująca operacje logiczne na bitach
     function calculateGateOutput(gateType, inA, inB = 0) {
         switch(gateType) {
             case 'NOT': return inA === 1 ? 0 : 1;
@@ -282,7 +281,6 @@
     const totalQuestions = 10;
     let questionsPool = [];
 
-    // Generator różnorodnych pytań na bieżącą rundę
     function generateQuestionsPool() {
         const pool = [];
         const gatesList = ['NOT', 'AND', 'NAND', 'OR', 'NOR', 'XOR', 'XNOR'];
@@ -294,14 +292,22 @@
             if (typeSelector < 0.35) {
                 // TYP 1: Rozpoznawanie symbolu graficznego
                 const randomGate = gatesList[Math.floor(Math.random() * gatesList.length)];
+                
+                // POPRAWKA: Gwarantujemy, że poprawna odpowiedź zawsze wejdzie do puli wyborów
+                const wrongGates = gatesList.filter(g => g !== randomGate);
+                wrongGates.sort(() => Math.random() - 0.5);
+                
+                // Bierzemy poprawną bramkę i dodajemy 3 losowe niepoprawne
+                const finalChoices = [randomGate, wrongGates[0], wrongGates[1], wrongGates[2]];
+                // Tasujemy te 4 odpowiedzi, żeby poprawna nie była zawsze na pierwszym miejscu
+                finalChoices.sort(() => Math.random() - 0.5);
+
                 pool.push({
                     type: 'symbol',
                     gate: randomGate,
                     questionText: "Jaka brama logiczna jest przedstawiona na poniższym schemacie?",
                     correctAnswer: randomGate,
-                    options: [...gatesList].sort(() => Math.random() - 0.5).slice(0, 4).includes(randomGate) ? 
-                             [...gatesList].sort(() => Math.random() - 0.5).slice(0, 4) : 
-                             [randomGate, ...gatesList.filter(g => g !== randomGate)].slice(0, 4).sort(() => Math.random() - 0.5)
+                    options: finalChoices
                 });
             } 
             else if (typeSelector < 0.70) {
@@ -330,19 +336,18 @@
                 });
             } 
             else {
-                // TYP 3: Układy wielopoziomowe (dwie bramki pod rząd - przejściówki sygnałowe)
+                // TYP 3: Układy wielopoziomowe (dwie bramki)
                 const gatesTwoInput = ['AND', 'NAND', 'OR', 'NOR', 'XOR', 'XNOR'];
                 const gate1 = gatesTwoInput[Math.floor(Math.random() * gatesTwoInput.length)];
                 const valA = binaryValues[Math.floor(Math.random() * 2)];
                 const valB = binaryValues[Math.floor(Math.random() * 2)];
                 
-                // Sygnał z pierwszej bramki idzie do negatora NOT
                 const midResult = calculateGateOutput(gate1, valA, valB);
                 const finalResult = calculateGateOutput('NOT', midResult);
 
                 pool.push({
                     type: 'combo-calc',
-                    gate: 'NOT', // Pokażemy dla urozmaicenia bramkę NOT
+                    gate: 'NOT',
                     questionText: `Sygnał z wyjścia bramki <strong>${gate1}</strong> (gdzie wejścia to A = ${valA}, B = ${valB}) został przekierowany bezpośrednio na wejście bramki <strong>NOT</strong>. Jaki jest stan końcowy na wyjściu całego układu?`,
                     correctAnswer: finalResult.toString(),
                     options: ['0', '1']
@@ -380,19 +385,16 @@
         const currentQ = questionsPool[currentIdx];
         qBox.innerHTML = currentQ.questionText;
 
-        // Jeśli to pytanie o symbol lub wyliczenie, renderujemy grafikę wektorową bramki
         if (currentQ.type === 'symbol' || currentQ.type === 'simple-calc') {
             visBox.innerHTML = svgDrawings[currentQ.gate];
             visBox.classList.remove("hidden");
         } else {
-            // Dla układów złożonych tekst w zupełności wystarcza
             visBox.innerHTML = "";
             visBox.classList.add("hidden");
         }
 
         optionsBox.innerHTML = "";
         
-        // Dynamiczne generowanie siatki przycisków odpowiedzi
         currentQ.options.forEach(opt => {
             const button = document.createElement("button");
             button.className = "option";
