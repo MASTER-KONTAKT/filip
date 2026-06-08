@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz: Protokoły Sieciowe i Porty</title>
+    <style>
+        :root {
+            --primary: #2b5c8f;
+            --secondary: #4a90e2;
+            --bg: #f4f7f6;
+            --card-bg: #ffffff;
+            --text: #333333;
+            --correct: #2ecc71;
+            --incorrect: #e74c3c;
+            --border: #e0e0e0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary);
+            margin-bottom: 30px;
+            font-size: 28px;
+            border-bottom: 3px solid var(--secondary);
+            padding-bottom: 10px;
+        }
+
+        .quiz-modes {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.1s;
+        }
+
+        .btn:hover {
+            background-color: var(--secondary);
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn.active {
+            background-color: #1a3a5f;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background-color: var(--border);
+            border-radius: 4px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background-color: var(--secondary);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .question-box {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        .options-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .option {
+            background-color: #fafafa;
+            border: 2px solid var(--border);
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s ease;
+        }
+
+        .option:hover {
+            background-color: #f0f4f8;
+            border-color: var(--secondary);
+        }
+
+        .option.correct {
+            background-color: rgba(46, 204, 113, 0.15);
+            border-color: var(--correct);
+            color: #1b7a43;
+            font-weight: bold;
+        }
+
+        .option.incorrect {
+            background-color: rgba(231, 76, 60, 0.15);
+            border-color: var(--incorrect);
+            color: #b83227;
+        }
+
+        .option.disabled {
+            pointer-events: none;
+        }
+
+        .feedback {
+            font-size: 16px;
+            margin-bottom: 25px;
+            font-weight: 500;
+            min-height: 24px;
+        }
+
+        .score-section {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .score-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .score-display {
+            font-size: 48px;
+            font-weight: 800;
+            color: var(--secondary);
+            margin-bottom: 20px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 25px;
+            font-size: 14px;
+        }
+
+        .summary-table th, .summary-table td {
+            border: 1px solid var(--border);
+            padding: 10px;
+            text-align: left;
+        }
+
+        .summary-table th {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .summary-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Quiz: Protokoły Sieciowe i Porty</h1>
+    
+    <div id="setup-section">
+        <p style="text-align: center; font-size: 16px; margin-bottom: 20px;">Wybierz tryb pytań, aby rozpocząć naukę:</p>
+        <div class="quiz-modes">
+            <button class="btn" onclick="startQuiz('ports')">Znam porty?</button>
+            <button class="btn" onclick="startQuiz('layers')">Znam warstwy ISO/OSI?</button>
+            <button class="btn" onclick="startQuiz('desc')">Znam opisy protokołów?</button>
+        </div>
+    </div>
+
+    <div id="quiz-section" class="hidden">
+        <div class="progress-bar">
+            <div id="progress" class="progress"></div>
+        </div>
+        
+        <div id="question-num" style="font-size: 14px; color: #777; margin-bottom: 5px;"></div>
+        <div id="question" class="question-box"></div>
+        <div id="options" class="options-container"></div>
+        
+        <div id="feedback" class="feedback"></div>
+        <button id="next-btn" class="btn hidden" onclick="nextQuestion()">Następne pytanie &rarr;</button>
+    </div>
+
+    <div id="score-section" class="score-section hidden">
+        <div class="score-title">Koniec Quizu!</div>
+        <div id="score-display" class="score-display">0 / 0</div>
+        <div id="score-pct" style="font-size: 18px; margin-bottom: 30px;"></div>
+        <button class="btn" onclick="resetQuiz()">Zagraj ponownie</button>
+        
+        <h3 style="margin-top: 40px; text-align: left; color: var(--primary);">Ściąga z protokołów (Twoja baza):</h3>
+        <table class="summary-table" id="reference-table">
+            <thead>
+                <tr>
+                    <th>Protokół</th>
+                    <th>Port(y)</th>
+                    <th>Warstwa ISO/OSI</th>
+                    <th>Opis</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    const protocolData = [
+        { name: "HTTP", ports: "80 TCP", layer: "Aplikacji", desc: "Nieszyfrowane strony WWW" },
+        { name: "HTTPS", ports: "443 TCP", layer: "Aplikacji", desc: "Szyfrowane strony WWW (HTTP + SSL/TLS)" },
+        { name: "FTP", ports: "20, 21 TCP", layer: "Aplikacji", desc: "Transfer plików (21 – komendy, 20 – dane)" },
+        { name: "SSH", ports: "22 TCP", layer: "Aplikacji", desc: "Bezpieczne logowanie zdalne" },
+        { name: "Telnet", ports: "23 TCP", layer: "Aplikacji", desc: "Logowanie zdalne (nieszyfrowane)" },
+        { name: "SMTP", ports: "25 TCP", layer: "Aplikacji", desc: "Wysyłanie e-maili" },
+        { name: "DNS", ports: "53 TCP/UDP", layer: "Aplikacji", desc: "Zamiana nazw domen na adresy IP" },
+        { name: "DHCP", ports: "67, 68 UDP", layer: "Aplikacji", desc: "Automatyczna konfiguracja IP" },
+        { name: "POP3", ports: "110 TCP", layer: "Aplikacji", desc: "Odbieranie e-maili" },
+        { name: "IMAP", ports: "143 TCP", layer: "Aplikacji", desc: "Odbieranie e-maili z zarządzaniem folderami" },
+        { name: "SNMP", ports: "161 UDP", layer: "Aplikacji", desc: "Zarządzanie i monitorowanie sieci" },
+        { name: "LDAP", ports: "389 TCP", layer: "Aplikacji", desc: "Usługi katalogowe (np. Active Directory)" },
+        { name: "TCP", ports: "-", layer: "Transportowa", desc: "Niezawodny, połączeniowy protokół z kontrolą przepływu" },
+        { name: "UDP", ports: "-", layer: "Transportowa", desc: "Szybki, bezpołączeniowy protokół (np. do streamingu, VoIP)" },
+        { name: "IP (v4/v6)", ports: "-", layer: "Sieciowa", desc: "Adresacja logiczna i routing pakietów" },
+        { name: "ICMP", ports: "-", layer: "Sieciowa", desc: "Diagnostyka sieci (np. polecenie ping)" },
+        { name: "ARP", ports: "-", layer: "Łącza Danych", desc: "Mapowanie adresów IP na adresy MAC" }
+    ];
+
+    let currentMode = '';
+    let questions = [];
+    let currentIdx = 0;
+    let score = 0;
+
+    // Populate reference table at the start
+    const tbody = document.querySelector("#reference-table tbody");
+    protocolData.forEach(p => {
+        const row = document.createElement("tr");
+        row.innerHTML = `<td><strong>${p.name}</strong></td><td>${p.ports}</td><td>${p.layer}</td><td>${p.desc}</td>`;
+        tbody.appendChild(row);
+    });
+
+    function shuffle(array) {
+        return array.sort(() => Math.random() - 0.5);
+    }
+
+    function startQuiz(mode) {
+        currentMode = mode;
+        questions = [...protocolData];
+        shuffle(questions);
+        currentIdx = 0;
+        score = 0;
+
+        document.getElementById("setup-section").classList.add("hidden");
+        document.getElementById("score-section").classList.add("hidden");
+        document.getElementById("quiz-section").classList.remove("hidden");
+
+        showQuestion();
+    }
+
+    function showQuestion() {
+        document.getElementById("next-btn").classList.add("hidden");
+        document.getElementById("feedback").innerText = "";
+        
+        const qNum = document.getElementById("question-num");
+        const qBox = document.getElementById("question");
+        const optionsBox = document.getElementById("options");
+        const progress = document.getElementById("progress");
+
+        qNum.innerText = `Pytanie ${currentIdx + 1} z ${questions.length}`;
+        progress.style.width = `${(currentIdx / questions.length) * 100}%`;
+
+        const currentProto = questions[currentIdx];
+        let questionText = "";
+        let correctAnswer = "";
+        let allAnswers = [];
+
+        if (currentMode === 'ports') {
+            questionText = `Jaki port (lub porty) oraz protokół transportowy przypisany jest do: ${currentProto.name}?`;
+            correctAnswer = currentProto.ports;
+            allAnswers = [...new Set(protocolData.map(p => p.ports))];
+        } else if (currentMode === 'layers') {
+            questionText = `W której warstwie modelu ISO/OSI działa protokół: ${currentProto.name}?`;
+            correctAnswer = currentProto.layer;
+            allAnswers = [...new Set(protocolData.map(p => p.layer))];
+        } else if (currentMode === 'desc') {
+            questionText = `Wskaż poprawny opis działania dla protokołu: ${currentProto.name}`;
+            correctAnswer = currentProto.desc;
+            allAnswers = [...new Set(protocolData.map(p => p.desc))];
+        }
+
+        qBox.innerText = questionText;
+        optionsBox.innerHTML = "";
+
+        // Filter and get 4 unique options (including correct answer)
+        let choices = [correctAnswer];
+        shuffle(allAnswers);
+        for (let ans of allAnswers) {
+            if (choices.length < 4 && ans !== correctAnswer) {
+                choices.push(ans);
+            }
+        }
+        shuffle(choices);
+
+        choices.forEach(choice => {
+            const button = document.createElement("button");
+            button.className = "option";
+            button.innerText = choice;
+            button.onclick = () => checkAnswer(button, choice, correctAnswer);
+            optionsBox.appendChild(button);
+        });
+    }
+
+    function checkAnswer(selectedButton, chosen, correct) {
+        const options = document.querySelectorAll(".option");
+        options.forEach(opt => {
+            opt.classList.add("disabled");
+            if (opt.innerText === correct) {
+                opt.classList.add("correct");
+            }
+        });
+
+        const feedback = document.getElementById("feedback");
+        if (chosen === correct) {
+            selectedButton.classList.add("correct");
+            feedback.innerHTML = "<span style='color: var(--correct);'>&check; Dobrze! Poprawna odpowiedź.</span>";
+            score++;
+        } else {
+            selectedButton.classList.add("incorrect");
+            feedback.innerHTML = `<span style='color: var(--incorrect);'>&cross; Błąd! Prawidłowa odpowiedź to: <strong>${correct}</strong></span>`;
+        }
+
+        document.getElementById("next-btn").classList.remove("hidden");
+    }
+
+    function nextQuestion() {
+        currentIdx++;
+        if (currentIdx < questions.length) {
+            showQuestion();
+        } else {
+            showScore();
+        }
+    }
+
+    function showScore() {
+        document.getElementById("quiz-section").classList.add("hidden");
+        const scoreSec = document.getElementById("score-section");
+        scoreSec.classList.remove("hidden");
+
+        document.getElementById("score-display").innerText = `${score} / ${questions.length}`;
+        const pct = Math.round((score / questions.length) * 100);
+        
+        let msg = "";
+        if (pct === 100) msg = "Genialnie! Znasz wszystko perfekcyjnie! 🏆";
+        else if (pct >= 80) msg = "Świetny wynik! Egzamin zdany śpiewająco! 🚀";
+        else if (pct >= 50) msg = "Dobra robota, ale warto jeszcze trochę powtórzyć. 📚";
+        else msg = "Musisz jeszcze poćwiczyć. Przejrzyj poniższą tabelę. 🔍";
+
+        document.getElementById("score-pct").innerText = `${pct}% - ${msg}`;
+    }
+
+    function resetQuiz() {
+        document.getElementById("score-section").classList.add("hidden");
+        document.getElementById("setup-section").classList.remove("hidden");
+    }
+</script>
+
+</body>
+</html>
