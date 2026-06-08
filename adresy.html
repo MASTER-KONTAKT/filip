@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Quiz Sieciowy: Protokoły, Porty i Adresacja IP</title>
+    <style>
+        :root {
+            --primary: #2b5c8f;
+            --secondary: #4a90e2;
+            --bg: #f4f7f6;
+            --card-bg: #ffffff;
+            --text: #333333;
+            --correct: #2ecc71;
+            --incorrect: #e74c3c;
+            --border: #e0e0e0;
+            --ip-display-bg: #2c3e50;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 30px;
+            font-weight: 400;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--primary);
+            margin-top: 20px;
+            margin-bottom: 10px;
+            border-left: 4px solid var(--secondary);
+            padding-left: 10px;
+        }
+
+        .quiz-modes {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        @media(max-width: 600px) {
+            .quiz-modes { grid-template-columns: 1fr; }
+        }
+
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.1s;
+            font-weight: 500;
+        }
+
+        .btn:hover { background-color: var(--secondary); }
+        .btn:active { transform: scale(0.98); }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background-color: var(--border);
+            border-radius: 4px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background-color: var(--secondary);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .question-box {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        .ip-badge {
+            display: block;
+            text-align: center;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 32px;
+            font-weight: bold;
+            background-color: var(--ip-display-bg);
+            color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0 25px 0;
+            letter-spacing: 2px;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+        }
+
+        .options-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .option {
+            background-color: #fafafa;
+            border: 2px solid var(--border);
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            text-align: left;
+            transition: all 0.2s ease;
+        }
+
+        .option:hover {
+            background-color: #f0f4f8;
+            border-color: var(--secondary);
+        }
+
+        .option.correct {
+            background-color: rgba(46, 204, 113, 0.15);
+            border-color: var(--correct);
+            color: #1b7a43;
+            font-weight: bold;
+        }
+
+        .option.incorrect {
+            background-color: rgba(231, 76, 60, 0.15);
+            border-color: var(--incorrect);
+            color: #b83227;
+        }
+
+        .option.disabled { pointer-events: none; }
+
+        .feedback {
+            font-size: 16px;
+            margin-bottom: 25px;
+            font-weight: 500;
+            min-height: 24px;
+        }
+
+        .score-section {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .score-display {
+            font-size: 48px;
+            font-weight: 800;
+            color: var(--secondary);
+            margin-bottom: 20px;
+        }
+
+        .hidden { display: none !important; }
+
+        .info-card {
+            background-color: #eef5fc;
+            border-left: 5px solid var(--secondary);
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 0 8px 8px 0;
+            text-align: left;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Centrum Nauki Sieci Komputerowych</h1>
+    <h2>Sprawdź swoją wiedzę z protokołów, portów oraz adresacji IP</h2>
+    
+    <div id="setup-section">
+        <div class="section-title">Moduł 1: Protokoły i Porty (z tabeli)</div>
+        <div class="quiz-modes">
+            <button class="btn" onclick="startQuiz('ports')">Znam porty i protokoły warstwy transp.?</button>
+            <button class="btn" onclick="startQuiz('layers')">Znam warstwy modelu ISO/OSI?</button>
+            <button class="btn" onclick="startQuiz('desc')">Znam pełne opisy działania?</button>
+        </div>
+
+        <div class="section-title">Moduł 2: Adresacja IP (Losowe adresy IP)</div>
+        <div class="quiz-modes">
+            <button class="btn" style="background-color: #27ae60;" onclick="startQuiz('ip-type')">Adres Prywatny czy Publiczny?</button>
+            <button class="btn" style="background-color: #27ae60;" onclick="startQuiz('ip-class')">Która to Klasa adresowa (A, B, C, D)?</button>
+        </div>
+    </div>
+
+    <div id="quiz-section" class="hidden">
+        <div class="progress-bar">
+            <div id="progress" class="progress"></div>
+        </div>
+        
+        <div id="question-num" style="font-size: 14px; color: #777; margin-bottom: 5px;"></div>
+        <div id="question" class="question-box"></div>
+        
+        <div id="ip-display" class="ip-badge hidden"></div>
+
+        <div id="options" class="options-container"></div>
+        
+        <div id="feedback" class="feedback"></div>
+        <button id="next-btn" class="btn hidden" onclick="nextQuestion()">Następne pytanie &rarr;</button>
+    </div>
+
+    <div id="score-section" class="score-section hidden">
+        <div style="font-size: 24px; font-weight: bold; color: var(--primary); margin-bottom: 15px;">Koniec zestawu testowego!</div>
+        <div id="score-display" class="score-display">0 / 0</div>
+        <div id="score-pct" style="font-size: 18px; margin-bottom: 30px;"></div>
+        <button class="btn" onclick="resetQuiz()">Wróć do menu głównego</button>
+
+        <div class="info-card">
+            <strong>Szybka przypominajka RFC 1918 (Adresy prywatne):</strong><br>
+            • Klasa A: 10.0.0.0 do 10.255.255.255<br>
+            • Klasa B: 172.16.0.0 do 172.31.255.255<br>
+            • Klasa C: 192.168.0.0 do 192.168.255.255<br><br>
+            <strong>Podział klasyczny (Pierwszy oktet):</strong><br>
+            • Klasa A: 0 - 127 (bit startowy: 0)<br>
+            • Klasa B: 128 - 191 (bity startowe: 10)<br>
+            • Klasa C: 192 - 223 (bity startowe: 110)<br>
+            • Klasa D: 224 - 239 (bity startowe: 1110)
+        </div>
+    </div>
+</div>
+
+<script>
+    // Dane z Twojego 1. obrazka (Protokoły)
+    const protocolData = [
+        { name: "HTTP", ports: "80 TCP", layer: "Aplikacji", desc: "Nieszyfrowane strony WWW" },
+        { name: "HTTPS", ports: "443 TCP", layer: "Aplikacji", desc: "Szyfrowane strony WWW (HTTP + SSL/TLS)" },
+        { name: "FTP", ports: "20, 21 TCP", layer: "Aplikacji", desc: "Transfer plików (21 – komendy, 20 – dane)" },
+        { name: "SSH", ports: "22 TCP", layer: "Aplikacji", desc: "Bezpieczne logowanie zdalne" },
+        { name: "Telnet", ports: "23 TCP", layer: "Aplikacji", desc: "Logowanie zdalne (nieszyfrowane)" },
+        { name: "SMTP", ports: "25 TCP", layer: "Aplikacji", desc: "Wysyłanie e-maili" },
+        { name: "DNS", ports: "53 TCP/UDP", layer: "Aplikacji", desc: "Zamiana nazw domen na adresy IP" },
+        { name: "DHCP", ports: "67, 68 UDP", layer: "Aplikacji", desc: "Automatyczna konfiguracja IP" },
+        { name: "POP3", ports: "110 TCP", layer: "Aplikacji", desc: "Odbieranie e-maili" },
+        { name: "IMAP", ports: "143 TCP", layer: "Aplikacji", desc: "Odbieranie e-maili z zarządzaniem folderami" },
+        { name: "SNMP", ports: "161 UDP", layer: "Aplikacji", desc: "Zarządzanie i monitorowanie sieci" },
+        { name: "LDAP", ports: "389 TCP", layer: "Aplikacji", desc: "Usługi katalogowe (np. Active Directory)" },
+        { name: "TCP", ports: "-", layer: "Transportowa", desc: "Niezawodny, połączeniowy protokół z kontrolą przepływu" },
+        { name: "UDP", ports: "-", layer: "Transportowa", desc: "Szybki, bezpołączeniowy protokół (np. do streamingu, VoIP)" },
+        { name: "IP (v4/v6)", ports: "-", layer: "Sieciowa", desc: "Adresacja logiczna i routing pakietów" },
+        { name: "ICMP", ports: "-", layer: "Sieciowa", desc: "Diagnostyka sieci (np. polecenie ping)" },
+        { name: "ARP", ports: "-", layer: "Łącza Danych", desc: "Mapowanie adresów IP na adresy MAC" }
+    ];
+
+    let currentMode = '';
+    let currentIdx = 0;
+    let score = 0;
+    const totalQuestionsPerRun = 10; // Stała liczba pytań na jedną serię nauki
+    let generatedQuestions = []; 
+
+    function shuffle(array) {
+        return array.sort(() => Math.random() - 0.5);
+    }
+
+    // Generator losowych i poprawnych adresów IP v4
+    function generateRandomIP() {
+        const o1 = Math.floor(Math.random() * 239) + 1; // Unikamy 0 i wyższych niż klasa D dla celów tego zadania
+        const o2 = Math.floor(Math.random() * 256);
+        const o3 = Math.floor(Math.random() * 256);
+        const o4 = Math.floor(Math.random() * 256);
+        return `${o1}.${o2}.${o3}.${o4}`;
+    }
+
+    // Funkcja weryfikująca czy IP jest prywatne (Na podstawie Twojego 2. obrazka)
+    function isPrivateIP(ipStr) {
+        const parts = ipStr.split('.').map(Number);
+        const o1 = parts[0];
+        const o2 = parts[1];
+
+        // Klasa A prywatna: 10.0.0.0 - 10.255.255.255
+        if (o1 === 10) return true;
+        
+        // Klasa B prywatna: 172.16.0.0 - 172.31.255.255
+        if (o1 === 172 && o2 >= 16 && o2 <= 31) return true;
+        
+        // Klasa C prywatna: 192.168.0.0 - 192.168.255.255
+        if (o1 === 192 && o2 === 168) return true;
+
+        return false;
+    }
+
+    // Funkcja określająca klasę adresu IP (Na podstawie Twojego 3. obrazka)
+    function getIPClass(ipStr) {
+        const firstOctet = Number(ipStr.split('.')[0]);
+        if (firstOctet >= 0 && firstOctet <= 127) return "Klasa A";
+        if (firstOctet >= 128 && firstOctet <= 191) return "Klasa B";
+        if (firstOctet >= 192 && firstOctet <= 223) return "Klasa C";
+        if (firstOctet >= 224 && firstOctet <= 239) return "Klasa D";
+        return "Inna / Niezdefiniowana";
+    }
+
+    function startQuiz(mode) {
+        currentMode = mode;
+        currentIdx = 0;
+        score = 0;
+        generatedQuestions = [];
+
+        // Przygotowanie pytań w zależności od modułu
+        if (mode === 'ip-type' || mode === 'ip-class') {
+            // Generujemy zestaw 10 losowych adresów IP dla testu adresacji
+            for (let i = 0; i < totalQuestionsPerRun; i++) {
+                generatedQuestions.push(generateRandomIP());
+            }
+        } else {
+            // Dla protokołów miksujemy bazę i bierzemy podgrupę
+            let tempProtos = [...protocolData];
+            shuffle(tempProtos);
+            generatedQuestions = tempProtos.slice(0, totalQuestionsPerRun);
+        }
+
+        document.getElementById("setup-section").classList.add("hidden");
+        document.getElementById("score-section").classList.add("hidden");
+        document.getElementById("quiz-section").classList.remove("hidden");
+
+        showQuestion();
+    }
+
+    function showQuestion() {
+        document.getElementById("next-btn").classList.add("hidden");
+        document.getElementById("feedback").innerText = "";
+        
+        const qNum = document.getElementById("question-num");
+        const qBox = document.getElementById("question");
+        const ipBox = document.getElementById("ip-display");
+        const optionsBox = document.getElementById("options");
+        const progress = document.getElementById("progress");
+
+        qNum.innerText = `Pytanie ${currentIdx + 1} z ${totalQuestionsPerRun}`;
+        progress.style.width = `${(currentIdx / totalQuestionsPerRun) * 100}%`;
+
+        optionsBox.innerHTML = "";
+        ipBox.classList.add("hidden");
+
+        let item = generatedQuestions[currentIdx];
+        let correctAnswer = "";
+        let choices = [];
+
+        // TRYBY DLA PROTOKOŁÓW
+        if (currentMode === 'ports') {
+            qBox.innerText = `Jaki port (lub porty) oraz protokół transportowy przypisany jest do: ${item.name}?`;
+            correctAnswer = item.ports;
+            let allAnswers = [...new Set(protocolData.map(p => p.ports))];
+            choices = [correctAnswer];
+            shuffle(allAnswers);
+            for (let ans of allAnswers) {
+                if (choices.length < 4 && ans !== correctAnswer) choices.push(ans);
+            }
+            shuffle(choices);
+
+        } else if (currentMode === 'layers') {
+            qBox.innerText = `W której warstwie modelu ISO/OSI działa protokół: ${item.name}?`;
+            correctAnswer = item.layer;
+            choices = ["Aplikacji", "Transportowa", "Sieciowa", "Łącza Danych"]; // Wszystkie możliwe z tabeli
+
+        } else if (currentMode === 'desc') {
+            qBox.innerText = `Wskaż poprawny opis działania dla protokołu: ${item.name}`;
+            correctAnswer = item.desc;
+            let allAnswers = [...new Set(protocolData.map(p => p.desc))];
+            choices = [correctAnswer];
+            shuffle(allAnswers);
+            for (let ans of allAnswers) {
+                if (choices.length < 4 && ans !== correctAnswer) choices.push(ans);
+            }
+            shuffle(choices);
+
+        // TRYBY DLA ADRESÓW IP
+        } else if (currentMode === 'ip-type') {
+            qBox.innerText = "Czy poniższy losowy adres IP należy do puli adresów PRYWATNYCH czy PUBLICZNYCH?";
+            ipBox.innerText = item;
+            ipBox.classList.remove("hidden");
+            
+            correctAnswer = isPrivateIP(item) ? "Prywatny" : "Publiczny";
+            choices = ["Prywatny", "Publiczny"];
+
+        } else if (currentMode === 'ip-class') {
+            qBox.innerText = "Do której klasy adresowej (z podziału klasycznego) należy podany adres IP?";
+            ipBox.innerText = item;
+            ipBox.classList.remove("hidden");
+
+            correctAnswer = getIPClass(item);
+            choices = ["Klasa A", "Klasa B", "Klasa C", "Klasa D"];
+        }
+
+        // Renderowanie przycisków wyboru
+        choices.forEach(choice => {
+            const button = document.createElement("button");
+            button.className = "option";
+            button.innerText = choice;
+            button.onclick = () => checkAnswer(button, choice, correctAnswer);
+            optionsBox.appendChild(button);
+        });
+    }
+
+    function checkAnswer(selectedButton, chosen, correct) {
+        const options = document.querySelectorAll(".option");
+        options.forEach(opt => {
+            opt.classList.add("disabled");
+            if (opt.innerText === correct) {
+                opt.classList.add("correct");
+            }
+        });
+
+        const feedback = document.getElementById("feedback");
+        if (chosen === correct) {
+            selectedButton.classList.add("correct");
+            feedback.innerHTML = "<span style='color: var(--correct); font-weight:bold;'>&check; Świetnie! Prawidłowa odpowiedź.</span>";
+            score++;
+        } else {
+            selectedButton.classList.add("incorrect");
+            feedback.innerHTML = `<span style='color: var(--incorrect); font-weight:bold;'>&cross; Niestety błąd. Poprawna odpowiedź to: <strong>${correct}</strong></span>`;
+        }
+
+        document.getElementById("next-btn").classList.remove("hidden");
+    }
+
+    function nextQuestion() {
+        currentIdx++;
+        if (currentIdx < totalQuestionsPerRun) {
+            showQuestion();
+        } else {
+            showScore();
+        }
+    }
+
+    function showScore() {
+        document.getElementById("quiz-section").classList.add("hidden");
+        const scoreSec = document.getElementById("score-section");
+        scoreSec.classList.remove("hidden");
+
+        document.getElementById("score-display").innerText = `${score} / ${totalQuestionsPerRun}`;
+        const pct = Math.round((score / totalQuestionsPerRun) * 100);
+        
+        let msg = "";
+        if (pct === 100) msg = "Mistrz sieci! Brak błędów! 🏆";
+        else if (pct >= 80) msg = "Znakomicie, wiedza opanowana bardzo dobrze! 🚀";
+        else if (pct >= 50) msg = "Zdane, ale przejrzyj jeszcze raz ściągawkę. 📚";
+        else msg = "Musisz jeszcze trochę potrenować. Spróbuj ponownie! 🔍";
+
+        document.getElementById("score-pct").innerText = `${pct}% - ${msg}`;
+    }
+
+    function resetQuiz() {
+        document.getElementById("score-section").classList.add("hidden");
+        document.getElementById("setup-section").classList.remove("hidden");
+    }
+</script>
+
+</body>
+</html>
