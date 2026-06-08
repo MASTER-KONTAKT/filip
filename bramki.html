@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz: Bramki Logiczne</title>
+    <style>
+        :root {
+            --primary: #2980b9;
+            --primary-dark: #1f618d;
+            --bg: #f4f7f6;
+            --card-bg: #ffffff;
+            --text: #333333;
+            --correct: #2ecc71;
+            --incorrect: #e74c3c;
+            --border: #e0e0e0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 750px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-dark);
+            margin-bottom: 25px;
+            font-size: 28px;
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 10px;
+        }
+
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.1s;
+            font-weight: bold;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn:hover { background-color: var(--primary-dark); }
+        .btn:active { transform: scale(0.98); }
+
+        .btn-back {
+            background-color: #7f8c8d;
+            margin-top: 15px;
+        }
+        .btn-back:hover { background-color: #95a5a6; }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background-color: var(--border);
+            border-radius: 4px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background-color: var(--primary);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .question-box {
+            font-size: 19px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            color: #2c3e50;
+            text-align: center;
+        }
+
+        .gate-visualization {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0 35px 0;
+            min-height: 120px;
+            background: #fdfdfd;
+            border: 1px dashed #ccc;
+            border-radius: 8px;
+            padding: 10px;
+        }
+
+        .options-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 500px) {
+            .options-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .option {
+            background-color: #fafafa;
+            border: 2px solid var(--border);
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 17px;
+            text-align: center;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .option:hover {
+            background-color: #ebf5fb;
+            border-color: var(--primary);
+        }
+
+        .option.correct {
+            background-color: rgba(46, 204, 113, 0.2);
+            border-color: var(--correct);
+            color: #1b7a43;
+            font-weight: bold;
+        }
+
+        .option.incorrect {
+            background-color: rgba(231, 76, 60, 0.2);
+            border-color: var(--incorrect);
+            color: #b83227;
+        }
+
+        .option.disabled { pointer-events: none; }
+
+        .feedback {
+            font-size: 16px;
+            margin-bottom: 25px;
+            font-weight: 500;
+            min-height: 24px;
+            text-align: center;
+        }
+
+        .score-section {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .score-display {
+            font-size: 54px;
+            font-weight: 800;
+            color: var(--primary-dark);
+            margin-bottom: 20px;
+        }
+
+        .hidden { display: none !important; }
+
+        .info-card {
+            background-color: #eaf2f8;
+            border-left: 5px solid var(--primary);
+            padding: 15px;
+            margin-top: 30px;
+            border-radius: 0 8px 8px 0;
+            text-align: left;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Quiz: Bramki Logiczne & Elektronika Cyfrowa</h1>
+    
+    <div id="setup-section" style="text-align: center;">
+        <p style="font-size: 17px; margin-bottom: 30px;">Przetestuj swoją wiedzę z zakresu symboli, tabel prawdy oraz analizy sygnałów w układach cyfrowych.</p>
+        <button class="btn" onclick="startQuiz()">Rozpocznij losowy test (10 pytań)</button>
+        <br>
+        <a href="index.html" class="btn btn-back">&larr; Powrót do menu głównego</a>
+    </div>
+
+    <div id="quiz-section" class="hidden">
+        <div class="progress-bar">
+            <div id="progress" class="progress"></div>
+        </div>
+        
+        <div id="question-num" style="font-size: 14px; color: #777; margin-bottom: 5px; text-align: center;"></div>
+        <div id="question" class="question-box"></div>
+        
+        <div id="visualization" class="gate-visualization"></div>
+
+        <div id="options" class="options-container"></div>
+        
+        <div id="feedback" class="feedback"></div>
+        <div style="text-align: center;">
+            <button id="next-btn" class="btn hidden" onclick="nextQuestion()">Następne pytanie &rarr;</button>
+        </div>
+    </div>
+
+    <div id="score-section" class="score-section hidden">
+        <div style="font-size: 24px; font-weight: bold; color: #2c3e50; margin-bottom: 15px;">Twój wynik testu bramek:</div>
+        <div id="score-display" class="score-display">0 / 0</div>
+        <div id="score-pct" style="font-size: 18px; margin-bottom: 30px;"></div>
+        
+        <div style="display: flex; flex-direction: column; gap: 10px; max-width: 300px; margin: 0 auto;">
+            <button class="btn" onclick="resetQuiz()">Zagraj ponownie</button>
+            <a href="index.html" class="btn btn-back" style="margin: 0;">Menu główne</a>
+        </div>
+
+        <div class="info-card">
+            <strong>Szybka przypominajka logiczna:</strong><br><br>
+            • <strong>NOT</strong> - Odwraca sygnał (0 daje 1, 1 daje 0).<br>
+            • <strong>AND</strong> - Daje 1 tylko, gdy WSZYSTKIE wejścia są równe 1.<br>
+            • <strong>NAND</strong> - Odwrotność AND (daje 0 tylko wtedy, gdy na wejściach są same jedynki).<br>
+            • <strong>OR</strong> - Daje 1, jeśli CO NAJMNIEJ JEDNO wejście to 1.<br>
+            • <strong>NOR</strong> - Odwrotność OR (daje 1 tylko wtedy, gdy na wejściach są same zera).<br>
+            • <strong>XOR</strong> - Daje 1, gdy wejścia RÓŻNIĄ SIĘ od siebie (np. 1 i 0).<br>
+            • <strong>XNOR</strong> - Daje 1, gdy wejścia są IDENTYCZNE (np. dwa zera lub dwie jedynki).
+        </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #e0e0e0;">
+        <a href="index.html" style="
+            display: inline-block;
+            text-decoration: none;
+            background-color: #7f8c8d;
+            color: white;
+            padding: 10px 20px;
+            font-size: 15px;
+            font-family: 'Segoe UI', sans-serif;
+            font-weight: 500;
+            border-radius: 6px;
+            transition: background 0.3s;
+        " onmouseover="this.style.backgroundColor='#95a5a6'" onmouseout="this.style.backgroundColor='#7f8c8d'">
+            &larr; Powrót do Strony Głównej
+        </a>
+    </div>
+</div>
+
+<script>
+    // Definicje czystych wektorów SVG dla poszczególnych bramek logicznych (zgodne z normą ANSI)
+    const svgDrawings = {
+        'NOT': `<svg width="160" height="80" viewBox="0 0 160 80"><line x1="20" y1="40" x2="50" y2="40" stroke="black" stroke-width="3"/><polygon points="50,20 50,60 90,40" fill="none" stroke="black" stroke-width="3"/><circle cx="95" cy="40" r="5" fill="none" stroke="black" stroke-width="3"/><line x1="100" y1="40" x2="140" y2="40" stroke="black" stroke-width="3"/><text x="10" y="35" font-family="sans-serif" font-size="14">A</text><text x="145" y="35" font-family="sans-serif" font-size="14">X</text></svg>`,
+        'AND': `<svg width="160" height="80" viewBox="0 0 160 80"><line x1="20" y1="25" x2="50" y2="25" stroke="black" stroke-width="3"/><line x1="20" y1="55" x2="50" y2="55" stroke="black" stroke-width="3"/><path d="M50,15 L75,15 A25,25 0 0,1 100,40 A25,25 0 0,1 75,65 L50,65 Z" fill="none" stroke="black" stroke-width="3"/><line x1="100" y1="40" x2="140" y2="40" stroke="black" stroke-width="3"/><text x="10" y="25" font-family="sans-serif" font-size="14">A</text><text x="10" y="60" font-family="sans-serif" font-size="14">B</text><text x="145" y="35" font-family="sans-serif" font-size="14">X</text></svg>`,
+        'NAND': `<svg width="160" height="80" viewBox="0 0 160 80"><line x1="20" y1="25" x2="50" y2="25" stroke="black" stroke-width="3"/><line x1="20" y1="55" x2="50" y2="55" stroke="black" stroke-width="3"/><path d="M50,15 L75,15 A25,25 0 0,1 100,40 A25,25 0 0,1 75,65 L50,65 Z" fill="none" stroke="black" stroke-width="3"/><circle cx="105" cy="40" r="5" fill="none" stroke="black" stroke-width="3"/><line x1="110" y1="40" x2="140" y2="40" stroke="black" stroke-width="3"/><text x="10" y="25" font-family="sans-serif" font-size="14">A</text><text x="10" y="60" font-family="sans-serif" font-size="14">B</text><text x="145" y="35" font-family="sans-serif" font-size="14">X</text></svg>`,
+        'OR': `<svg width="160" height="80" viewBox="0 0 160 80"><line x1="20" y1="25" x2="48" y2="25" stroke="black" stroke-width="3"/><line x1="20" y1="55" x2="48" y2="55" stroke="black" stroke-width="3"/><path d="M45,15 C55,30 55,50 45,65 C65,65 85,60 105,40 C85,20 65,15 45,15 Z" fill="none" stroke="black" stroke-width="3"/><line x1="105" y1="40" x2="140" y2="40" stroke="black" stroke-width="3"/><text x="10" y="25" font-family="sans-serif" font-size="14">A</text><text x="10" y="60" font-family="sans-serif" font-size="14">B</text><text x="145" y="35" font-family="sans-serif" font-size="14">X</text></svg>`,
+        'NOR': `<svg width="160" height="80" viewBox="0 0 160 80"><line x1="20" y1="25" x2="48" y2="25" stroke="black" stroke-width="3"/><line x1="20" y1="55" x2="48" y2="55" stroke="black" stroke-width="3"/><path d="M45,15 C55,30 55,50 45,65 C65,65 85,60 105,40 C85,20 65,15 45,15 Z" fill="none" stroke="black" stroke-width="3"/><circle cx="110" cy="40" r="5" fill="none" stroke="black" stroke-width="3"/><line x1="115" y1="40" x2="140" y2="40" stroke="black" stroke-width="3"/><text x="10" y="25" font-family="sans-serif" font-size="14">A</text><text x="10" y="60" font-family="sans-serif" font-size="14">B</text><text x="145" y="35" font-family="sans-serif" font-size="14">X</text></svg>`,
+        'XOR': `<svg width="160" height="80" viewBox="0 0 160 80"><line x1="20" y1="25" x2="43" y2="25" stroke="black" stroke-width="3"/><line x1="20" y1="55" x2="43" y2="55" stroke="black" stroke-width="3"/><path d="M37,15 C47,30 47,50 37,65" fill="none" stroke="black" stroke-width="3"/><path d="M45,15 C55,30 55,50 45,65 C65,65 85,60 105,40 C85,20 65,15 45,15 Z" fill="none" stroke="black" stroke-width="3"/><line x1="105" y1="40" x2="140" y2="40" stroke="black" stroke-width="3"/><text x="10" y="25" font-family="sans-serif" font-size="14">A</text><text x="10" y="60" font-family="sans-serif" font-size="14">B</text><text x="145" y="35" font-family="sans-serif" font-size="14">X</text></svg>`,
+        'XNOR': `<svg width="160" height="80" viewBox="0 0 160 80"><line x1="20" y1="25" x2="43" y2="25" stroke="black" stroke-width="3"/><line x1="20" y1="55" x2="43" y2="55" stroke="black" stroke-width="3"/><path d="M37,15 C47,30 47,50 37,65" fill="none" stroke="black" stroke-width="3"/><path d="M45,15 C55,30 55,50 45,65 C65,65 85,60 105,40 C85,20 65,15 45,15 Z" fill="none" stroke="black" stroke-width="3"/><circle cx="110" cy="40" r="5" fill="none" stroke="black" stroke-width="3"/><line x1="115" y1="40" x2="140" y2="40" stroke="black" stroke-width="3"/><text x="10" y="25" font-family="sans-serif" font-size="14">A</text><text x="10" y="60" font-family="sans-serif" font-size="14">B</text><text x="145" y="35" font-family="sans-serif" font-size="14">X</text></svg>`
+    };
+
+    // Logika wykonująca operacje logiczne na bitach
+    function calculateGateOutput(gateType, inA, inB = 0) {
+        switch(gateType) {
+            case 'NOT': return inA === 1 ? 0 : 1;
+            case 'AND': return (inA === 1 && inB === 1) ? 1 : 0;
+            case 'NAND': return (inA === 1 && inB === 1) ? 0 : 1;
+            case 'OR': return (inA === 1 || inB === 1) ? 1 : 0;
+            case 'NOR': return (inA === 0 && inB === 0) ? 1 : 0;
+            case 'XOR': return (inA !== inB) ? 1 : 0;
+            case 'XNOR': return (inA === inB) ? 1 : 0;
+            default: return 0;
+        }
+    }
+
+    let currentIdx = 0;
+    let score = 0;
+    const totalQuestions = 10;
+    let questionsPool = [];
+
+    // Generator różnorodnych pytań na bieżącą rundę
+    function generateQuestionsPool() {
+        const pool = [];
+        const gatesList = ['NOT', 'AND', 'NAND', 'OR', 'NOR', 'XOR', 'XNOR'];
+        const binaryValues = [0, 1];
+
+        for (let i = 0; i < totalQuestions; i++) {
+            const typeSelector = Math.random();
+
+            if (typeSelector < 0.35) {
+                // TYP 1: Rozpoznawanie symbolu graficznego
+                const randomGate = gatesList[Math.floor(Math.random() * gatesList.length)];
+                pool.push({
+                    type: 'symbol',
+                    gate: randomGate,
+                    questionText: "Jaka brama logiczna jest przedstawiona na poniższym schemacie?",
+                    correctAnswer: randomGate,
+                    options: [...gatesList].sort(() => Math.random() - 0.5).slice(0, 4).includes(randomGate) ? 
+                             [...gatesList].sort(() => Math.random() - 0.5).slice(0, 4) : 
+                             [randomGate, ...gatesList.filter(g => g !== randomGate)].slice(0, 4).sort(() => Math.random() - 0.5)
+                });
+            } 
+            else if (typeSelector < 0.70) {
+                // TYP 2: Wartość na wyjściu pojedynczej bramki
+                const randomGate = gatesList[Math.floor(Math.random() * gatesList.length)];
+                const valA = binaryValues[Math.floor(Math.random() * 2)];
+                const valB = binaryValues[Math.floor(Math.random() * 2)];
+                
+                let qText = "";
+                let outputVal = 0;
+                
+                if (randomGate === 'NOT') {
+                    qText = `Na wejście bramki <strong>NOT</strong> podano sygnał <strong>A = ${valA}</strong>. Jaki stan pojawi się na wyjściu X?`;
+                    outputVal = calculateGateOutput('NOT', valA);
+                } else {
+                    qText = `Na wejścia bramki <strong>${randomGate}</strong> podano stany: <strong>A = ${valA}</strong> oraz <strong>B = ${valB}</strong>. Jaki będzie wynik na wyjściu X?`;
+                    outputVal = calculateGateOutput(randomGate, valA, valB);
+                }
+
+                pool.push({
+                    type: 'simple-calc',
+                    gate: randomGate,
+                    questionText: qText,
+                    correctAnswer: outputVal.toString(),
+                    options: ['0', '1']
+                });
+            } 
+            else {
+                // TYP 3: Układy wielopoziomowe (dwie bramki pod rząd - przejściówki sygnałowe)
+                const gatesTwoInput = ['AND', 'NAND', 'OR', 'NOR', 'XOR', 'XNOR'];
+                const gate1 = gatesTwoInput[Math.floor(Math.random() * gatesTwoInput.length)];
+                const valA = binaryValues[Math.floor(Math.random() * 2)];
+                const valB = binaryValues[Math.floor(Math.random() * 2)];
+                
+                // Sygnał z pierwszej bramki idzie do negatora NOT
+                const midResult = calculateGateOutput(gate1, valA, valB);
+                const finalResult = calculateGateOutput('NOT', midResult);
+
+                pool.push({
+                    type: 'combo-calc',
+                    gate: 'NOT', // Pokażemy dla urozmaicenia bramkę NOT
+                    questionText: `Sygnał z wyjścia bramki <strong>${gate1}</strong> (gdzie wejścia to A = ${valA}, B = ${valB}) został przekierowany bezpośrednio na wejście bramki <strong>NOT</strong>. Jaki jest stan końcowy na wyjściu całego układu?`,
+                    correctAnswer: finalResult.toString(),
+                    options: ['0', '1']
+                });
+            }
+        }
+        return pool;
+    }
+
+    function startQuiz() {
+        currentIdx = 0;
+        score = 0;
+        questionsPool = generateQuestionsPool();
+
+        document.getElementById("setup-section").classList.add("hidden");
+        document.getElementById("score-section").classList.add("hidden");
+        document.getElementById("quiz-section").classList.remove("hidden");
+
+        showQuestion();
+    }
+
+    function showQuestion() {
+        document.getElementById("next-btn").classList.add("hidden");
+        document.getElementById("feedback").innerText = "";
+        
+        const qNum = document.getElementById("question-num");
+        const qBox = document.getElementById("question");
+        const visBox = document.getElementById("visualization");
+        const optionsBox = document.getElementById("options");
+        const progress = document.getElementById("progress");
+
+        qNum.innerText = `Pytanie ${currentIdx + 1} z ${totalQuestions}`;
+        progress.style.width = `${(currentIdx / totalQuestions) * 100}%`;
+
+        const currentQ = questionsPool[currentIdx];
+        qBox.innerHTML = currentQ.questionText;
+
+        // Jeśli to pytanie o symbol lub wyliczenie, renderujemy grafikę wektorową bramki
+        if (currentQ.type === 'symbol' || currentQ.type === 'simple-calc') {
+            visBox.innerHTML = svgDrawings[currentQ.gate];
+            visBox.classList.remove("hidden");
+        } else {
+            // Dla układów złożonych tekst w zupełności wystarcza
+            visBox.innerHTML = "";
+            visBox.classList.add("hidden");
+        }
+
+        optionsBox.innerHTML = "";
+        
+        // Dynamiczne generowanie siatki przycisków odpowiedzi
+        currentQ.options.forEach(opt => {
+            const button = document.createElement("button");
+            button.className = "option";
+            button.innerText = opt;
+            button.onclick = () => verifyAnswer(button, opt, currentQ.correctAnswer);
+            optionsBox.appendChild(button);
+        });
+    }
+
+    function verifyAnswer(clickedButton, chosen, correct) {
+        const allOptions = document.querySelectorAll(".option");
+        allOptions.forEach(opt => {
+            opt.classList.add("disabled");
+            if (opt.innerText === correct) {
+                opt.classList.add("correct");
+            }
+        });
+
+        const feedback = document.getElementById("feedback");
+        if (chosen === correct) {
+            clickedButton.classList.add("correct");
+            feedback.innerHTML = "<span style='color: var(--correct); font-weight: bold;'>&check; Doskonale! To poprawna odpowiedź.</span>";
+            score++;
+        } else {
+            clickedButton.classList.add("incorrect");
+            feedback.innerHTML = `<span style='color: var(--incorrect); font-weight: bold;'>&cross; Błąd! Prawidłowa odpowiedź to: <strong>${correct}</strong></span>`;
+        }
+
+        document.getElementById("next-btn").classList.remove("hidden");
+    }
+
+    function nextQuestion() {
+        currentIdx++;
+        if (currentIdx < totalQuestions) {
+            showQuestion();
+        } else {
+            displayFinalScore();
+        }
+    }
+
+    function displayFinalScore() {
+        document.getElementById("quiz-section").classList.add("hidden");
+        const scoreSec = document.getElementById("score-section");
+        scoreSec.classList.remove("hidden");
+
+        document.getElementById("score-display").innerText = `${score} / ${totalQuestions}`;
+        const percentage = Math.round((score / totalQuestions) * 100);
+        
+        let message = "";
+        if (percentage === 100) message = "Geniusz elektroniki! Masz absolutną wiedzę o bramkach logicznych! 🏆";
+        else if (percentage >= 80) message = "Wspaniale! Świetny wynik z analizy cyfrowej. 🚀";
+        else if (percentage >= 50) message = "Zaliczone! Jednak warto przejrzeć tabelę prawdy jeszcze raz. 📚";
+        else message = "Słabo. Potrenuj i spróbuj ponownie, logika cyfrowa wymaga ćwiczeń! 🔍";
+
+        document.getElementById("score-pct").innerText = `${percentage}% - ${message}`;
+    }
+
+    function resetQuiz() {
+        document.getElementById("score-section").classList.add("hidden");
+        document.getElementById("setup-section").classList.remove("hidden");
+    }
+</script>
+
+</body>
+</html>
