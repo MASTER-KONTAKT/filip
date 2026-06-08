@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz: Protokoły i Standardy Sieciowe</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --primary-light: #34495e;
+            --accent: #16a085;
+            --bg: #f5f6fa;
+            --card-bg: #ffffff;
+            --text: #2f3640;
+            --correct: #2ecc71;
+            --incorrect: #e74c3c;
+            --border: #dcdde1;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 750px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary);
+            margin-bottom: 25px;
+            font-size: 28px;
+            border-bottom: 3px solid var(--accent);
+            padding-bottom: 10px;
+        }
+
+        .btn {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.1s;
+            font-weight: bold;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn:hover { background-color: #117a65; }
+        .btn:active { transform: scale(0.98); }
+
+        .btn-back {
+            background-color: #7f8c8d;
+            margin-top: 15px;
+        }
+        .btn-back:hover { background-color: #95a5a6; }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background-color: var(--border);
+            border-radius: 4px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background-color: var(--accent);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .question-box {
+            font-size: 19px;
+            font-weight: 600;
+            margin-bottom: 30px;
+            color: var(--primary);
+            text-align: center;
+        }
+
+        .options-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 500px) {
+            .options-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .option {
+            background-color: #fafafa;
+            border: 2px solid var(--border);
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            text-align: center;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .option:hover {
+            background-color: #e8f8f5;
+            border-color: var(--accent);
+        }
+
+        .option.correct {
+            background-color: rgba(46, 204, 113, 0.2);
+            border-color: var(--correct);
+            color: #1b7a43;
+            font-weight: bold;
+        }
+
+        .option.incorrect {
+            background-color: rgba(231, 76, 60, 0.2);
+            border-color: var(--incorrect);
+            color: #b83227;
+        }
+
+        .option.disabled { pointer-events: none; }
+
+        .feedback {
+            font-size: 16px;
+            margin-bottom: 25px;
+            font-weight: 500;
+            min-height: 24px;
+            text-align: center;
+        }
+
+        .score-section {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .score-display {
+            font-size: 54px;
+            font-weight: 800;
+            color: var(--accent);
+            margin-bottom: 20px;
+        }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Quiz: Protokoły, Porty i Klasy Sieciowe</h1>
+    
+    <div id="setup-section" style="text-align: center;">
+        <p style="font-size: 17px; margin-bottom: 30px;">Przetestuj znajomość portów TCP/UDP, warstw modelu ISO/OSI, standardów IEEE oraz klas adresacji IP.</p>
+        <button class="btn" onclick="startQuiz()">Rozpocznij losowy test (10 pytań)</button>
+        <br>
+        <a href="index.html" class="btn btn-back">&larr; Powrót do menu głównego</a>
+    </div>
+
+    <div id="quiz-section" class="hidden">
+        <div class="progress-bar">
+            <div id="progress" class="progress"></div>
+        </div>
+        
+        <div id="question-num" style="font-size: 14px; color: #7f8c8d; margin-bottom: 5px; text-align: center;"></div>
+        <div id="question" class="question-box"></div>
+
+        <div id="options" class="options-container"></div>
+        
+        <div id="feedback" class="feedback"></div>
+        <div style="text-align: center;">
+            <button id="next-btn" class="btn hidden" onclick="nextQuestion()">Następne pytanie &rarr;</button>
+        </div>
+    </div>
+
+    <div id="score-section" class="score-section hidden">
+        <div style="font-size: 24px; font-weight: bold; color: var(--primary); margin-bottom: 15px;">Twój wynik końcowy:</div>
+        <div id="score-display" class="score-display">0 / 0</div>
+        <div id="score-pct" style="font-size: 18px; margin-bottom: 30px;"></div>
+        
+        <div style="display: flex; flex-direction: column; gap: 10px; max-width: 300px; margin: 0 auto;">
+            <button class="btn" onclick="resetQuiz()">Spróbuj ponownie</button>
+            <a href="index.html" class="btn btn-back" style="margin: 0;">Menu główne</a>
+        </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border);">
+        <a href="index.html" style="
+            display: inline-block;
+            text-decoration: none;
+            background-color: #7f8c8d;
+            color: white;
+            padding: 10px 20px;
+            font-size: 15px;
+            font-family: 'Segoe UI', sans-serif;
+            font-weight: 500;
+            border-radius: 6px;
+            transition: background 0.3s;
+        " onmouseover="this.style.backgroundColor='#95a5a6'" onmouseout="this.style.backgroundColor='#7f8c8d'">
+            &larr; Powrót do Strony Głównej
+        </a>
+    </div>
+</div>
+
+<script>
+    // Baza danych stworzona na podstawie dostarczonych zrzutów ekranu
+    const protocols = [
+        { name: 'HTTP', port: '80 TCP', layer: 'Aplikacji', desc: 'Nieszyfrowane strony WWW' },
+        { name: 'HTTPS', port: '443 TCP', layer: 'Aplikacji', desc: 'Szyfrowane strony WWW (HTTP + SSL/TLS)' },
+        { name: 'FTP', port: '20, 21 TCP', layer: 'Aplikacji', desc: 'Transfer plików (21 – komendy, 20 – dane)' },
+        { name: 'SSH', port: '22 TCP', layer: 'Aplikacji', desc: 'Bezpieczne logowanie zdalne' },
+        { name: 'Telnet', port: '23 TCP', layer: 'Aplikacji', desc: 'Logowanie zdalne (nieszyfrowane)' },
+        { name: 'SMTP', port: '25 TCP', layer: 'Aplikacji', desc: 'Wysyłanie e-maili' },
+        { name: 'DNS', port: '53 TCP/UDP', layer: 'Aplikacji', desc: 'Zamiana nazw domen na adresy IP' },
+        { name: 'DHCP', port: '67, 68 UDP', layer: 'Aplikacji', desc: 'Automatyczna konfiguracja IP' },
+        { name: 'POP3', port: '110 TCP', layer: 'Aplikacji', desc: 'Odbieranie e-maili' },
+        { name: 'IMAP', port: '143 TCP', layer: 'Aplikacji', desc: 'Odbieranie e-maili z zarządzaniem folderami' },
+        { name: 'SNMP', port: '161 UDP', layer: 'Aplikacji', desc: 'Zarządzanie i monitorowanie sieci' },
+        { name: 'LDAP', port: '389 TCP', layer: 'Aplikacji', desc: 'Usługi katalogowe (np. Active Directory)' },
+        { name: 'TCP', port: 'Brak portu', layer: 'Transportowa', desc: 'Niezawodny, połączeniowy protokół z kontrolą przepływu' },
+        { name: 'UDP', port: 'Brak portu', layer: 'Transportowa', desc: 'Szybki, bezpołączeniowy protokół (np. do streamingu, VoIP)' },
+        { name: 'IP (v4/v6)', port: 'Brak portu', layer: 'Sieciowa', desc: 'Adresacja logiczna i routing pakietów' },
+        { name: 'ICMP', port: 'Brak portu', layer: 'Sieciowa', desc: 'Diagnostyka sieci (np. polecenie ping)' },
+        { name: 'ARP', port: 'Brak portu', layer: 'Łącza Danych', desc: 'Mapowanie adresów IP na adresy MAC' }
+    ];
+
+    const ieeeStandards = [
+        { num: '802.3', match: 'Kabel / Ethernet' },
+        { num: '802.5', match: 'Pierścień / Token Ring' },
+        { num: '802.11', match: 'Wi-Fi / WLAN' },
+        { num: '802.15', match: 'Bluetooth' },
+        { num: '802.1Q', match: 'VLAN (Tagowanie)' },
+        { num: '802.1X', match: 'Logowanie / RADIUS' },
+        { num: '802.1D', match: 'Blokowanie pętli / STP' }
+    ];
+
+    const ipClasses = [
+        { name: 'Klasa A', bits: '0', range: '0-127', binary: '00000000 do 01111111' },
+        { name: 'Klasa B', bits: '10', range: '128-191', binary: '10000000 do 10111111' },
+        { name: 'Klasa C', bits: '110', range: '192-223', binary: '11000000 do 11011111' },
+        { name: 'Klasa D', bits: '1110', range: '224-239', binary: '11100000 do 11101111' }
+    ];
+
+    let currentIdx = 0;
+    let score = 0;
+    const totalQuestions = 10;
+    let questionsPool = [];
+
+    function generateQuestions() {
+        const pool = [];
+        
+        for (let i = 0; i < totalQuestions; i++) {
+            const randType = Math.random();
+
+            if (randType < 0.3) {
+                // TYP 1: Pytanie o port lub opis protokołu
+                const proto = protocols[Math.floor(Math.random() * protocols.length)];
+                const askPort = Math.random() > 0.5;
+
+                if (askPort && proto.port !== 'Brak portu') {
+                    const wrong = protocols.filter(p => p.port !== 'Brak portu' && p.port !== proto.port).map(p => p.port);
+                    wrong.sort(() => Math.random() - 0.5);
+                    const options = [proto.port, wrong[0], wrong[1], wrong[2]].sort(() => Math.random() - 0.5);
+
+                    pool.push({
+                        q: `Jaki port (oraz protokół transportowy) jest domyślnie przypisany do usługi <strong>${proto.name}</strong>?`,
+                        correct: proto.port,
+                        options: options
+                    });
+                } else {
+                    const wrong = protocols.filter(p => p.desc !== proto.desc).map(p => p.desc);
+                    wrong.sort(() => Math.random() - 0.5);
+                    const options = [proto.desc, wrong[0], wrong[1], wrong[2]].sort(() => Math.random() - 0.5);
+
+                    pool.push({
+                        q: `Który protokół pasuje do opisu: <em>"${proto.desc}"</em>?`,
+                        correct: proto.name,
+                        options: [proto.name, protocols.filter(p => p.name !== proto.name)[0].name, protocols.filter(p => p.name !== proto.name)[1].name, protocols.filter(p => p.name !== proto.name)[2].name].sort(() => Math.random() - 0.5)
+                    });
+                }
+            } 
+            else if (randType < 0.55) {
+                // TYP 2: Pytanie o warstwę ISO/OSI
+                const proto = protocols[Math.floor(Math.random() * protocols.length)];
+                const layers = ['Aplikacji', 'Transportowa', 'Sieciowa', 'Łącza Danych'];
+
+                pool.push({
+                    q: `Do której warstwy modelu ISO/OSI należy protokół <strong>${proto.name}</strong>?`,
+                    correct: proto.layer,
+                    options: layers.sort(() => Math.random() - 0.5)
+                });
+            } 
+            else if (randType < 0.8) {
+                // TYP 3: Pytanie o Standardy IEEE
+                const std = ieeeStandards[Math.floor(Math.random() * ieeeStandards.length)];
+                const askText = Math.random() > 0.5;
+
+                if (askText) {
+                    const wrong = ieeeStandards.filter(s => s.match !== std.match).map(s => s.match);
+                    wrong.sort(() => Math.random() - 0.5);
+                    const options = [std.match, wrong[0], wrong[1], wrong[2]].sort(() => Math.random() - 0.5);
+
+                    pool.push({
+                        q: `Z jaką technologią lub funkcją kojarzysz standard numer <strong>IEEE ${std.num}</strong>?`,
+                        correct: std.match,
+                        options: options
+                    });
+                } else {
+                    const wrong = ieeeStandards.filter(s => s.num !== std.num).map(s => s.num);
+                    wrong.sort(() => Math.random() - 0.5);
+                    const options = [std.num, wrong[0], wrong[1], wrong[2]].sort(() => Math.random() - 0.5);
+
+                    pool.push({
+                        q: `Który standard IEEE odpowiada za technologię: <strong>${std.match}</strong>?`,
+                        correct: std.num,
+                        options: options
+                    });
+                }
+            } 
+            else {
+                // TYP 4: Klasy adresów IP (zakresy / bity startowe)
+                const ipCl = ipClasses[Math.floor(Math.random() * ipClasses.length)];
+                const askBits = Math.random() > 0.5;
+
+                if (askBits) {
+                    const wrong = ipClasses.filter(c => c.bits !== ipCl.bits).map(c => c.bits);
+                    const options = [ipCl.bits, wrong[0], wrong[1], wrong[2]].sort(() => Math.random() - 0.5);
+
+                    pool.push({
+                        q: `Jakie są bity startowe (w systemie binarnym) dla adresów należących do <strong>${ipCl.name}</strong>?`,
+                        correct: ipCl.bits,
+                        options: options
+                    });
+                } else {
+                    const wrong = ipClasses.filter(c => c.range !== ipCl.range).map(c => c.range);
+                    const options = [ipCl.range, wrong[0], wrong[1], wrong[2]].sort(() => Math.random() - 0.5);
+
+                    pool.push({
+                        q: `Jaki jest poprawny dziesiętny zakres pierwszego oktetu dla adresów z <strong>${ipCl.name}</strong>?`,
+                        correct: ipCl.range,
+                        options: options
+                    });
+                }
+            }
+        }
+        return pool;
+    }
+
+    function startQuiz() {
+        currentIdx = 0;
+        score = 0;
+        questionsPool = generateQuestions();
+
+        document.getElementById("setup-section").classList.add("hidden");
+        document.getElementById("score-section").classList.add("hidden");
+        document.getElementById("quiz-section").classList.remove("hidden");
+
+        showQuestion();
+    }
+
+    function showQuestion() {
+        document.getElementById("next-btn").classList.add("hidden");
+        document.getElementById("feedback").innerText = "";
+        
+        const qNum = document.getElementById("question-num");
+        const qBox = document.getElementById("question");
+        const optionsBox = document.getElementById("options");
+        const progress = document.getElementById("progress");
+
+        qNum.innerText = `Pytanie ${currentIdx + 1} z ${totalQuestions}`;
+        progress.style.width = `${(currentIdx / totalQuestions) * 100}%`;
+
+        const currentQ = questionsPool[currentIdx];
+        qBox.innerHTML = currentQ.q;
+
+        optionsBox.innerHTML = "";
+        
+        currentQ.options.forEach(opt => {
+            const button = document.createElement("button");
+            button.className = "option";
+            button.innerText = opt;
+            button.onclick = () => verifyAnswer(button, opt, currentQ.correct);
+            optionsBox.appendChild(button);
+        });
+    }
+
+    function verifyAnswer(clickedButton, chosen, correct) {
+        const allOptions = document.querySelectorAll(".option");
+        allOptions.forEach(opt => {
+            opt.classList.add("disabled");
+            if (opt.innerText === correct) {
+                opt.classList.add("correct");
+            }
+        });
+
+        const feedback = document.getElementById("feedback");
+        if (chosen === correct) {
+            clickedButton.classList.add("correct");
+            feedback.innerHTML = "<span style='color: var(--correct); font-weight: bold;'>&check; Świetnie! Prawidłowa odpowiedź.</span>";
+            score++;
+        } else {
+            clickedButton.classList.add("incorrect");
+            feedback.innerHTML = `<span style='color: var(--incorrect); font-weight: bold;'>&cross; Błąd! Prawidłowa odpowiedź to: <strong>${correct}</strong></span>`;
+        }
+
+        document.getElementById("next-btn").classList.remove("hidden");
+    }
+
+    function nextQuestion() {
+        currentIdx++;
+        if (currentIdx < totalQuestions) {
+            showQuestion();
+        } else {
+            displayFinalScore();
+        }
+    }
+
+    function displayFinalScore() {
+        document.getElementById("quiz-section").classList.add("hidden");
+        const scoreSec = document.getElementById("score-section");
+        scoreSec.classList.remove("hidden");
+
+        document.getElementById("score-display").innerText = `${score} / ${totalQuestions}`;
+        const percentage = Math.round((score / totalQuestions) * 100);
+        
+        let message = "";
+        if (percentage === 100) message = "Perfekcyjnie! Masz sieci w małym palcu! 👑";
+        else if (percentage >= 80) message = "Doskonale! Egzamin zawodowy zdany bez problemu. 💻";
+        else if (percentage >= 50) message = "Dobrze! Masz zaliczenie, ale powtórz trudniejsze porty. 🔌";
+        else message = "Musisz jeszcze poćwiczyć. Przejrzyj tabelę protokołów i wróć silniejszy! 🔍";
+
+        document.getElementById("score-pct").innerText = `${percentage}% - ${message}`;
+    }
+
+    function resetQuiz() {
+        document.getElementById("score-section").classList.add("hidden");
+        document.getElementById("setup-section").classList.remove("hidden");
+    }
+</script>
+
+</body>
+</html>
