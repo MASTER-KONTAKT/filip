@@ -12052,12 +12052,60 @@ hintBtn.addEventListener("click", () => {
 
 function normalize(text) {
 
-    return text
+    return String(text)
         .toLowerCase()
-        .trim()
-        .replace(/[.,!?;:"]/g, "")
-        .replace(/\s+/g, " ");
 
+        // Wszystkie rodzaje apostrofów traktuj tak samo
+        .replace(/[’‘`´]/g, "'")
+
+        // Skróty:
+        // I'm -> I am
+        // he's -> he is
+        // she's -> she is
+        // they're -> they are
+        // can't -> cannot
+        // won't -> will not
+        .replace(/\bcan't\b/g, "cannot")
+        .replace(/\bwon't\b/g, "will not")
+        .replace(/\bshan't\b/g, "shall not")
+        .replace(/\bain't\b/g, "is not")
+        .replace(/\bi'm\b/g, "i am")
+        .replace(/\byou're\b/g, "you are")
+        .replace(/\bhe's\b/g, "he is")
+        .replace(/\bshe's\b/g, "she is")
+        .replace(/\bit's\b/g, "it is")
+        .replace(/\bwe're\b/g, "we are")
+        .replace(/\bthey're\b/g, "they are")
+        .replace(/\bi've\b/g, "i have")
+        .replace(/\byou've\b/g, "you have")
+        .replace(/\bwe've\b/g, "we have")
+        .replace(/\bthey've\b/g, "they have")
+        .replace(/\bi'd\b/g, "i would")
+        .replace(/\byou'd\b/g, "you would")
+        .replace(/\bhe'd\b/g, "he would")
+        .replace(/\bshe'd\b/g, "she would")
+        .replace(/\bwe'd\b/g, "we would")
+        .replace(/\bthey'd\b/g, "they would")
+        .replace(/\bi'll\b/g, "i will")
+        .replace(/\byou'll\b/g, "you will")
+        .replace(/\bhe'll\b/g, "he will")
+        .replace(/\bshe'll\b/g, "she will")
+        .replace(/\bwe'll\b/g, "we will")
+        .replace(/\bthey'll\b/g, "they will")
+
+        // Usuń apostrofy
+        .replace(/'/g, "")
+
+        // Interpunkcja nie ma znaczenia
+        .replace(/[.,!?;:()[\]{}"“”„…\-]/g, " ")
+
+        // Pozostałe dziwne znaki też ignoruj
+        .replace(/[^\p{L}\p{N}\s]/gu, " ")
+
+        // Wielokrotne spacje -> jedna
+        .replace(/\s+/g, " ")
+
+        .trim();
 }
 
 
