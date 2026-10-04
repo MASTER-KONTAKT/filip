@@ -1,181 +1,2156 @@
+
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel Główny: Nauka Sieci Komputerowych</title>
-    <style>
-        :root {
-            --primary: #2b5c8f;
-            --secondary: #4a90e2;
-            --bg: #f4f7f6;
-            --card-bg: #ffffff;
-            --text: #333333;
-            --accent: #27ae60;
-            --disabled: #95a5a6;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modal Quiz</title>
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            margin: 0;
-            padding: 40px 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
-        .hub-container {
-            max-width: 1000px;
-            width: 100%;
-            text-align: center;
-        }
+:root {
+    --bg: #f5f7fb;
+    --card: #ffffff;
+    --text: #151922;
+    --muted: #747b88;
+    --border: #e7e9ee;
+    --primary: #111827;
+    --primary-hover: #1f2937;
+    --green: #15803d;
+    --green-bg: #ecfdf3;
+    --red: #dc2626;
+    --red-bg: #fef2f2;
+    --shadow: 0 20px 60px rgba(15, 23, 42, 0.08);
+}
 
-        h1 {
-            color: var(--primary);
-            font-size: 36px;
-            margin-bottom: 10px;
-        }
+body {
+    font-family: Inter, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+}
 
-        p.subtitle {
-            color: #666;
-            font-size: 18px;
-            margin-bottom: 40px;
-        }
+/* =========================
+   SCREENS
+========================= */
 
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
-            margin-bottom: 40px;
-        }
+.screen {
+    min-height: 100vh;
+    width: 100%;
+}
 
-        .card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 30px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            transition: transform 0.2s, box-shadow 0.2s;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            position: relative;
-            overflow: hidden;
-            border-top: 5px solid var(--secondary);
-        }
+.hidden {
+    display: none !important;
+}
 
-        .card:hover(:not(.locked)) {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-        }
+/* =========================
+   MENU
+========================= */
 
-        .card h3 {
-            color: var(--primary);
-            font-size: 22px;
-            margin-top: 0;
-            margin-bottom: 15px;
-        }
+#menuScreen {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 30px 18px;
+}
 
-        .card p {
-            color: #555;
-            font-size: 14px;
-            line-height: 1.5;
-            margin-bottom: 25px;
-            flex-grow: 1;
-        }
+.menu-wrapper {
+    width: 100%;
+    max-width: 720px;
+}
 
-        .btn {
-            display: inline-block;
-            text-decoration: none;
-            background-color: var(--primary);
-            color: white;
-            padding: 12px 20px;
-            border-radius: 6px;
-            font-weight: 500;
-            transition: background 0.3s;
-        }
+.logo {
+    text-align: center;
+    margin-bottom: 35px;
+}
 
-        .btn:hover {
-            background-color: var(--secondary);
-        }
+.logo-small {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
 
-        /* Style dla zablokowanych sekcji */
-        .card.locked {
-            border-top-color: var(--disabled);
-            opacity: 0.75;
-        }
+.logo h1 {
+    font-size: clamp(38px, 7vw, 62px);
+    line-height: 1;
+    letter-spacing: -3px;
+}
 
-        .card.locked:hover {
-            cursor: not-allowed;
-        }
+.logo p {
+    margin-top: 14px;
+    color: var(--muted);
+    font-size: 16px;
+}
 
-        .badge {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background-color: #e74c3c;
-            color: white;
-            font-size: 11px;
-            padding: 4px 8px;
-            border-radius: 20px;
-            font-weight: bold;
-            text-transform: uppercase;
-        }
+.menu-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 28px;
+    padding: 32px;
+    box-shadow: var(--shadow);
+}
 
-        .badge.active {
-            background-color: var(--accent);
-        }
+.section {
+    margin-bottom: 28px;
+}
 
-        footer {
-            margin-top: 40px;
-            color: #888;
-            font-size: 14px;
-        }
-    </style>
+.section:last-child {
+    margin-bottom: 0;
+}
+
+.section-title {
+    font-size: 13px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--muted);
+    margin-bottom: 12px;
+}
+
+.options {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.option {
+    border: 1px solid var(--border);
+    background: #fff;
+    color: var(--text);
+    border-radius: 14px;
+    min-height: 52px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: .18s ease;
+}
+
+.option:hover {
+    border-color: #b9bec8;
+    transform: translateY(-1px);
+}
+
+.option.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+.hint-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 15px 17px;
+}
+
+.hint-info strong {
+    display: block;
+    font-size: 15px;
+    margin-bottom: 3px;
+}
+
+.hint-info span {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.switch {
+    width: 52px;
+    height: 30px;
+    background: #d9dde5;
+    border-radius: 30px;
+    position: relative;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.switch::after {
+    content: "";
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    top: 3px;
+    left: 3px;
+    background: white;
+    border-radius: 50%;
+    transition: .2s;
+    box-shadow: 0 2px 5px rgba(0,0,0,.15);
+}
+
+.switch.active {
+    background: var(--primary);
+}
+
+.switch.active::after {
+    transform: translateX(22px);
+}
+
+.start-btn {
+    width: 100%;
+    height: 58px;
+    border: 0;
+    border-radius: 16px;
+    background: var(--primary);
+    color: white;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: .18s;
+    margin-top: 5px;
+}
+
+.start-btn:hover {
+    background: var(--primary-hover);
+    transform: translateY(-1px);
+}
+
+/* =========================
+   QUIZ
+========================= */
+
+#quizScreen {
+    padding: 25px 18px;
+}
+
+.quiz-wrapper {
+    max-width: 850px;
+    margin: 0 auto;
+}
+
+.quiz-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.quiz-label {
+    font-size: 13px;
+    color: var(--muted);
+    font-weight: 700;
+}
+
+.score {
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.progress {
+    height: 7px;
+    background: #e5e7eb;
+    border-radius: 20px;
+    overflow: hidden;
+    margin-bottom: 24px;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 0%;
+    background: var(--primary);
+    transition: width .3s ease;
+}
+
+.quiz-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 28px;
+    box-shadow: var(--shadow);
+    padding: clamp(25px, 5vw, 50px);
+}
+
+.question-number {
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 18px;
+}
+
+.question {
+    font-size: clamp(23px, 4vw, 34px);
+    line-height: 1.25;
+    letter-spacing: -.7px;
+    font-weight: 800;
+    margin-bottom: 28px;
+}
+
+.answer-box {
+    width: 100%;
+    min-height: 150px;
+    resize: vertical;
+    border: 1px solid var(--border);
+    border-radius: 17px;
+    padding: 17px;
+    font: inherit;
+    font-size: 16px;
+    outline: none;
+    background: #fafbfc;
+    transition: .18s;
+}
+
+.answer-box:focus {
+    border-color: #9ca3af;
+    background: white;
+    box-shadow: 0 0 0 4px rgba(17,24,39,.05);
+}
+
+.hint-box {
+    margin-top: 15px;
+    padding: 14px 16px;
+    border-radius: 14px;
+    background: #f6f7f9;
+    color: #555c68;
+    font-size: 14px;
+    line-height: 1.5;
+    display: none;
+}
+
+.hint-box.visible {
+    display: block;
+}
+
+.quiz-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-top: 18px;
+}
+
+.hint-btn,
+.check-btn,
+.next-btn {
+    border: 0;
+    border-radius: 14px;
+    min-height: 50px;
+    padding: 0 20px;
+    font-weight: 800;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.hint-btn {
+    background: #f0f2f5;
+    color: #303641;
+}
+
+.check-btn,
+.next-btn {
+    background: var(--primary);
+    color: white;
+    margin-left: auto;
+}
+
+.feedback {
+    margin-top: 20px;
+    padding: 18px;
+    border-radius: 17px;
+    display: none;
+}
+
+.feedback.correct {
+    display: block;
+    background: var(--green-bg);
+    border: 1px solid #bbf7d0;
+    color: #166534;
+}
+
+.feedback.incorrect {
+    display: block;
+    background: var(--red-bg);
+    border: 1px solid #fecaca;
+    color: #991b1b;
+}
+
+.feedback-title {
+    font-weight: 900;
+    margin-bottom: 8px;
+}
+
+.feedback-answer {
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* =========================
+   RESULTS
+========================= */
+
+#resultsScreen {
+    padding: 30px 18px;
+}
+
+.results-wrapper {
+    max-width: 850px;
+    margin: 0 auto;
+}
+
+.result-header {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 28px;
+    padding: 45px 30px;
+    text-align: center;
+    box-shadow: var(--shadow);
+    margin-bottom: 18px;
+}
+
+.result-header h1 {
+    font-size: 38px;
+    letter-spacing: -1.5px;
+}
+
+.result-score {
+    font-size: 58px;
+    font-weight: 900;
+    letter-spacing: -3px;
+    margin: 10px 0;
+}
+
+.result-percent {
+    color: var(--muted);
+    font-size: 15px;
+}
+
+.review {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+}
+
+.review-title {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+    font-weight: 900;
+}
+
+.review-item {
+    padding: 22px 24px;
+    border-bottom: 1px solid var(--border);
+}
+
+.review-item:last-child {
+    border-bottom: 0;
+}
+
+.review-question {
+    font-weight: 800;
+    margin-bottom: 13px;
+    line-height: 1.45;
+}
+
+.review-row {
+    font-size: 14px;
+    line-height: 1.6;
+    margin-top: 6px;
+}
+
+.review-label {
+    font-weight: 800;
+}
+
+.correct-text {
+    color: var(--green);
+}
+
+.incorrect-text {
+    color: var(--red);
+}
+
+.result-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+.result-actions button {
+    flex: 1;
+    height: 52px;
+    border: 0;
+    border-radius: 15px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.again-btn {
+    background: var(--primary);
+    color: white;
+}
+
+.menu-btn {
+    background: white;
+    border: 1px solid var(--border) !important;
+    color: var(--text);
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 600px) {
+
+    .menu-card {
+        padding: 22px;
+        border-radius: 22px;
+    }
+
+    .options {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .quiz-card {
+        border-radius: 22px;
+        padding: 24px 19px;
+    }
+
+    .question {
+        font-size: 25px;
+    }
+
+    .quiz-actions {
+        flex-wrap: wrap;
+    }
+
+    .hint-btn,
+    .check-btn,
+    .next-btn {
+        flex: 1;
+        margin-left: 0;
+    }
+
+    .result-actions {
+        flex-direction: column;
+    }
+}
+</style>
 </head>
+
 <body>
 
-<div class="hub-container">
-    <h1>Platforma Edukacyjna: Sieci i IP</h1>
-    <p class="subtitle">Wybierz moduł, który chcesz dzisiaj przećwiczyć</p>
+<!-- =========================
+     MENU
+========================= -->
 
-    <div class="grid-container">
-        
-        <div class="card">
-            <span class="badge active">Dostępne</span>
-            <h3>Protokoły i Porty</h3>
-            <p>Przetestuj swoją znajomość portów TCP/UDP, warstw modelu ISO/OSI oraz pełnych opisów działania protokołów aplikacyjnych.</p>
-            <a href="quiz_protokoly.html" class="btn">Uruchom Quiz</a>
+<section id="menuScreen" class="screen">
+
+    <div class="menu-wrapper">
+
+        <div class="logo">
+            <div class="logo-small">English Grammar</div>
+            <h1>Modal Quiz</h1>
+            <p>Speculation & Deduction</p>
         </div>
 
-        <div class="card" style="border-top-color: var(--accent);">
-            <span class="badge active">Dostępne</span>
-            <h3>Adresacja IPv4</h3>
-            <p>Generuj losowe adresy IP. Ćwicz szybkie rozpoznawanie klas (A, B, C, D) oraz sprawdzaj czy podany adres jest prywatny (RFC 1918) czy publiczny.</p>
-            <a href="adresy.html" class="btn" style="background-color: var(--accent);">Uruchom Quiz IP</a>
-        </div>
+        <div class="menu-card">
 
-        <div class="card" style="border-top-color: var(--accent);">
-            <span class="badge">Dostepne</span>
-            <h3 >Bramki logiczne</h3>
-            <p>bramki i chuj co tu wiecej mowic</p>
-            <a href="bramki.html" class="btn" style="background-color: var(--accent);">dosteUruchom Quiz bramki</a>
-        </div>
+            <div class="section">
+                <div class="section-title">Poziom trudności</div>
 
-        <div class="card" style="border-top-color: var(--accent);">
-            <span class="badge active">Dostępne</span>
-            <h3>Numery Ieee</h3>
-            <p></p>
-            <a href="quiz_sieci.html" class="btn" style="background-color: var(--accent);">Uruchom Quiz IP</a>
+                <div class="options">
+                    <button class="option active" data-difficulty="easy">
+                        Łatwy
+                    </button>
+
+                    <button class="option" data-difficulty="medium">
+                        Średni
+                    </button>
+
+                    <button class="option" data-difficulty="hard">
+                        Trudny
+                    </button>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Liczba pytań</div>
+
+                <div class="options">
+                    <button class="option active" data-count="1">
+                        Losuj po jednym
+                    </button>
+
+                    <button class="option" data-count="5">5</button>
+                    <button class="option" data-count="10">10</button>
+                    <button class="option" data-count="15">15</button>
+                    <button class="option" data-count="20">20</button>
+                    <button class="option" data-count="25">25</button>
+                    <button class="option" data-count="30">30</button>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Podpowiedź</div>
+
+                <div class="hint-row">
+
+                    <div class="hint-info">
+                        <strong>Pokazuj podpowiedź</strong>
+                        <span>Możesz ją otworzyć podczas pytania.</span>
+                    </div>
+
+                    <div id="hintSwitch" class="switch active"></div>
+
+                </div>
+            </div>
+
+            <button id="startBtn" class="start-btn">
+                Rozpocznij quiz
+            </button>
+
         </div>
 
     </div>
 
-    <footer>
-        &copy; 2026 Panel Edukacyjny - Przygotowanie do Egzaminów Zawodowych
-    </footer>
-</div>
+</section>
+
+
+<!-- =========================
+     QUIZ
+========================= -->
+
+<section id="quizScreen" class="screen hidden">
+
+    <div class="quiz-wrapper">
+
+        <div class="quiz-top">
+
+            <div id="questionCounter" class="quiz-label">
+                Pytanie 1 z 10
+            </div>
+
+            <div id="scoreDisplay" class="score">
+                Wynik: 0
+            </div>
+
+        </div>
+
+        <div class="progress">
+            <div id="progressBar" class="progress-bar"></div>
+        </div>
+
+        <div class="quiz-card">
+
+            <div id="questionNumber" class="question-number">
+                Pytanie 01
+            </div>
+
+            <div id="questionText" class="question">
+                ...
+            </div>
+
+            <textarea
+                id="answerInput"
+                class="answer-box"
+                placeholder="Wpisz tutaj przekształcone zdanie..."
+            ></textarea>
+
+            <div id="hintBox" class="hint-box"></div>
+
+            <div id="feedback" class="feedback">
+
+                <div id="feedbackTitle" class="feedback-title"></div>
+
+                <div id="feedbackAnswer" class="feedback-answer"></div>
+
+            </div>
+
+            <div class="quiz-actions">
+
+                <button id="hintBtn" class="hint-btn">
+                    Pokaż podpowiedź
+                </button>
+
+                <button id="checkBtn" class="check-btn">
+                    Sprawdź odpowiedź
+                </button>
+
+                <button id="nextBtn" class="next-btn hidden">
+                    Następne →
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     RESULTS
+========================= -->
+
+<section id="resultsScreen" class="screen hidden">
+
+    <div class="results-wrapper">
+
+        <div class="result-header">
+
+            <h1>Koniec quizu</h1>
+
+            <div id="resultScore" class="result-score">
+                0 / 10
+            </div>
+
+            <div id="resultPercent" class="result-percent">
+                0%
+            </div>
+
+        </div>
+
+        <div class="review">
+
+            <div class="review-title">
+                Podsumowanie odpowiedzi
+            </div>
+
+            <div id="reviewList"></div>
+
+        </div>
+
+        <div class="result-actions">
+
+            <button id="againBtn" class="again-btn">
+                Zagraj ponownie
+            </button>
+
+            <button id="menuBtn" class="menu-btn">
+                Menu główne
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<script>
+
+/* =========================================================
+   BAZA PYTAŃ
+   WKLEJ TUTAJ SWOJĄ BAZĘ
+========================================================= */
+
+const questions = {
+
+   easy: [
+
+{
+q:"John is working in the garden. I'm almost certain.",
+h:"must",
+a:"John must be working in the garden."
+},
+
+{
+q:"Tom is waiting for the bus. I'm almost certain.",
+h:"must",
+a:"Tom must be waiting for the bus."
+},
+
+{
+q:"Sarah is at home. It's possible.",
+h:"might",
+a:"Sarah might be at home."
+},
+
+{
+q:"Peter is sleeping. I'm almost certain.",
+h:"must",
+a:"Peter must be sleeping."
+},
+
+{
+q:"Anna forgot her keys. It's possible.",
+h:"might have",
+a:"Anna might have forgotten her keys."
+},
+
+{
+q:"Mark is working today. It's possible.",
+h:"might",
+a:"Mark might be working today."
+},
+
+{
+q:"This isn't Mary's bag. I'm certain.",
+h:"can't",
+a:"This can't be Mary's bag."
+},
+
+{
+q:"Lucy is ill. It's possible.",
+h:"might",
+a:"Lucy might be ill."
+},
+
+{
+q:"They are at school. I'm almost certain.",
+h:"must",
+a:"They must be at school."
+},
+
+{
+q:"James is waiting outside. It's possible.",
+h:"might",
+a:"James might be waiting outside."
+},
+
+{
+q:"David forgot his phone. It's possible.",
+h:"might have",
+a:"David might have forgotten his phone."
+},
+
+{
+q:"This is not John's car. I'm certain.",
+h:"can't",
+a:"This can't be John's car."
+},
+
+{
+q:"Emma is studying. I'm almost certain.",
+h:"must",
+a:"Emma must be studying."
+},
+
+{
+q:"Paul is driving. It's possible.",
+h:"might",
+a:"Paul might be driving."
+},
+
+{
+q:"She left early. It's possible.",
+h:"might have",
+a:"She might have left early."
+},
+
+{
+q:"He is tired. I'm almost certain.",
+h:"must",
+a:"He must be tired."
+},
+
+{
+q:"They missed the bus. It's possible.",
+h:"might have",
+a:"They might have missed the bus."
+},
+
+{
+q:"This isn't Peter's phone. I'm certain.",
+h:"can't",
+a:"This can't be Peter's phone."
+},
+
+{
+q:"The children are outside. It's possible.",
+h:"might",
+a:"The children might be outside."
+},
+
+{
+q:"Sarah is sleeping. I'm almost certain.",
+h:"must",
+a:"Sarah must be sleeping."
+},
+
+{
+q:"He forgot the meeting. It's possible.",
+h:"might have",
+a:"He might have forgotten the meeting."
+},
+
+{
+q:"She is at school. I'm almost certain.",
+h:"must",
+a:"She must be at school."
+},
+
+{
+q:"They are waiting for us. It's possible.",
+h:"might",
+a:"They might be waiting for us."
+},
+
+{
+q:"He didn't see the message. It's possible.",
+h:"might have",
+a:"He might not have seen the message."
+},
+
+{
+q:"This isn't her jacket. I'm certain.",
+h:"can't",
+a:"This can't be her jacket."
+},
+
+{
+q:"The dog is in the garden. It's possible.",
+h:"might",
+a:"The dog might be in the garden."
+},
+
+{
+q:"He is working late. I'm almost certain.",
+h:"must",
+a:"He must be working late."
+},
+
+{
+q:"She missed the train. It's possible.",
+h:"might have",
+a:"She might have missed the train."
+},
+
+{
+q:"They are at home. I'm almost certain.",
+h:"must",
+a:"They must be at home."
+},
+
+{
+q:"He is waiting outside. It's possible.",
+h:"might",
+a:"He might be waiting outside."
+},
+
+{
+q:"She forgot her wallet. It's possible.",
+h:"might have",
+a:"She might have forgotten her wallet."
+},
+
+{
+q:"This isn't their house. I'm certain.",
+h:"can't",
+a:"This can't be their house."
+},
+
+{
+q:"The baby is hungry. I'm almost certain.",
+h:"must",
+a:"The baby must be hungry."
+},
+
+{
+q:"He is watching TV. It's possible.",
+h:"might",
+a:"He might be watching TV."
+},
+
+{
+q:"They arrived late. It's possible.",
+h:"might have",
+a:"They might have arrived late."
+},
+
+{
+q:"She is busy. I'm almost certain.",
+h:"must",
+a:"She must be busy."
+},
+
+{
+q:"He forgot his homework. It's possible.",
+h:"might have",
+a:"He might have forgotten his homework."
+},
+
+{
+q:"This isn't Tom's bike. I'm certain.",
+h:"can't",
+a:"This can't be Tom's bike."
+},
+
+{
+q:"She is waiting for the bus. It's possible.",
+h:"might",
+a:"She might be waiting for the bus."
+},
+
+{
+q:"He is at work. I'm almost certain.",
+h:"must",
+a:"He must be at work."
+},
+
+{
+q:"They lost the keys. It's possible.",
+h:"might have",
+a:"They might have lost the keys."
+},
+
+{
+q:"She is in the kitchen. It's possible.",
+h:"might",
+a:"She might be in the kitchen."
+},
+
+{
+q:"He knows the answer. I'm almost certain.",
+h:"must",
+a:"He must know the answer."
+},
+
+{
+q:"They forgot about the party. It's possible.",
+h:"might have",
+a:"They might have forgotten about the party."
+},
+
+{
+q:"This isn't my book. I'm certain.",
+h:"can't",
+a:"This can't be my book."
+},
+
+{
+q:"She is talking to John. It's possible.",
+h:"might",
+a:"She might be talking to John."
+},
+
+{
+q:"He is at the gym. I'm almost certain.",
+h:"must",
+a:"He must be at the gym."
+},
+
+{
+q:"They missed the train. It's possible.",
+h:"might have",
+a:"They might have missed the train."
+},
+
+{
+q:"She is working today. It's possible.",
+h:"might",
+a:"She might be working today."
+},
+
+{
+q:"He is very tired. I'm almost certain.",
+h:"must",
+a:"He must be very tired."
+}
+
+],
+
+medium: [
+
+{
+q:"John isn't answering his phone. Maybe he's driving.",
+h:"might",
+a:"John might be driving."
+},
+
+{
+q:"Sarah arrived late. I'm almost certain she missed the bus.",
+h:"must have",
+a:"Sarah must have missed the bus."
+},
+
+{
+q:"The streets are wet. Maybe it rained last night.",
+h:"might have",
+a:"It might have rained last night."
+},
+
+{
+q:"Peter knows everything about computers. I'm certain he works with them.",
+h:"must",
+a:"Peter must work with computers."
+},
+
+{
+q:"Anna didn't come to school. Maybe she was ill.",
+h:"might have",
+a:"Anna might have been ill."
+},
+
+{
+q:"The lights are off. I'm almost certain nobody is home.",
+h:"must",
+a:"Nobody must be home."
+},
+
+{
+q:"He looks tired. Maybe he didn't sleep well.",
+h:"might have",
+a:"He might not have slept well."
+},
+
+{
+q:"She has a new phone. I'm almost certain she bought it recently.",
+h:"must have",
+a:"She must have bought it recently."
+},
+
+{
+q:"They haven't arrived yet. Maybe they're stuck in traffic.",
+h:"might",
+a:"They might be stuck in traffic."
+},
+
+{
+q:"This food smells terrible. I'm certain it isn't fresh.",
+h:"can't",
+a:"This food can't be fresh."
+},
+
+{
+q:"Mark knows the city very well. I'm certain he has lived here for years.",
+h:"must have",
+a:"Mark must have lived here for years."
+},
+
+{
+q:"Lucy isn't answering. Maybe she's sleeping.",
+h:"might",
+a:"Lucy might be sleeping."
+},
+
+{
+q:"He got wet. Maybe he forgot his umbrella.",
+h:"might have",
+a:"He might have forgotten his umbrella."
+},
+
+{
+q:"She speaks French perfectly. I'm certain she lived in France.",
+h:"must have",
+a:"She must have lived in France."
+},
+
+{
+q:"The shop is closed. Maybe nobody is working today.",
+h:"might",
+a:"Nobody might be working today."
+},
+
+{
+q:"They know about the surprise. I'm almost certain someone told them.",
+h:"must have",
+a:"Someone must have told them."
+},
+
+{
+q:"He didn't answer the door. Maybe he wasn't at home.",
+h:"might have",
+a:"He might not have been at home."
+},
+
+{
+q:"She is wearing a uniform. I'm certain she works here.",
+h:"must",
+a:"She must work here."
+},
+
+{
+q:"The train has left. Maybe we missed it.",
+h:"might have",
+a:"We might have missed the train."
+},
+
+{
+q:"He knows all the answers. I'm certain he studied a lot.",
+h:"must have",
+a:"He must have studied a lot."
+},
+
+{
+q:"The restaurant is empty. Maybe it is closed.",
+h:"might",
+a:"The restaurant might be closed."
+},
+
+{
+q:"She hasn't replied. Maybe she hasn't seen the message.",
+h:"might not have",
+a:"She might not have seen the message."
+},
+
+{
+q:"He is wearing a suit. I'm certain he's going to a meeting.",
+h:"must",
+a:"He must be going to a meeting."
+},
+
+{
+q:"They aren't answering. I'm certain they aren't home.",
+h:"can't",
+a:"They can't be at home."
+},
+
+{
+q:"He knows about the party. Maybe someone told him.",
+h:"might have",
+a:"Someone might have told him."
+},
+
+{
+q:"She has been studying all evening. I'm certain she's tired.",
+h:"must",
+a:"She must be tired."
+},
+
+{
+q:"The car isn't outside. Maybe they went shopping.",
+h:"might have",
+a:"They might have gone shopping."
+},
+
+{
+q:"She is carrying an umbrella. I'm certain it is raining.",
+h:"must",
+a:"It must be raining."
+},
+
+{
+q:"He isn't at school today. Maybe he's ill.",
+h:"might",
+a:"He might be ill."
+},
+
+{
+q:"The window is broken. I'm almost certain someone broke it.",
+h:"must have",
+a:"Someone must have broken the window."
+},
+
+{
+q:"They didn't call us. Maybe they didn't get the message.",
+h:"might not have",
+a:"They might not have got the message."
+},
+
+{
+q:"He has a new laptop. I'm certain he bought it recently.",
+h:"must have",
+a:"He must have bought it recently."
+},
+
+{
+q:"She looks happy. I'm certain she got good news.",
+h:"must have",
+a:"She must have got good news."
+},
+
+{
+q:"He isn't answering. Maybe he's in the shower.",
+h:"might",
+a:"He might be in the shower."
+},
+
+{
+q:"They know the city very well. I'm certain they've lived here for years.",
+h:"must have",
+a:"They must have lived here for years."
+},
+
+{
+q:"The car isn't here. Maybe they went shopping.",
+h:"might have",
+a:"They might have gone shopping."
+},
+
+{
+q:"He has been running. I'm almost certain he is tired.",
+h:"must",
+a:"He must be tired."
+},
+
+{
+q:"She didn't pass the exam. Maybe she didn't study enough.",
+h:"might not have",
+a:"She might not have studied enough."
+},
+
+{
+q:"They are not in the office. Maybe they are having lunch.",
+h:"might",
+a:"They might be having lunch."
+},
+
+{
+q:"He is very good at Spanish. I'm certain he has studied it for years.",
+h:"must have",
+a:"He must have studied Spanish for years."
+},
+
+{
+q:"The baby is crying. I'm almost certain she is hungry.",
+h:"must",
+a:"The baby must be hungry."
+},
+
+{
+q:"She hasn't arrived. Maybe she missed the bus.",
+h:"might have",
+a:"She might have missed the bus."
+},
+
+{
+q:"The lights are on. I'm almost certain someone is home.",
+h:"must",
+a:"Someone must be home."
+},
+
+{
+q:"He isn't answering his phone. Maybe he's in a meeting.",
+h:"might",
+a:"He might be in a meeting."
+},
+
+{
+q:"She knows the answer. I'm almost certain she studied for the test.",
+h:"must have",
+a:"She must have studied for the test."
+},
+
+{
+q:"The road is wet. Maybe it has been raining.",
+h:"might",
+a:"It might have been raining."
+},
+
+{
+q:"He looks worried. I'm almost certain something happened.",
+h:"must have",
+a:"Something must have happened."
+},
+
+{
+q:"They aren't here. Maybe they went home.",
+h:"might have",
+a:"They might have gone home."
+},
+
+{
+q:"She is smiling. I'm almost certain she is happy.",
+h:"must",
+a:"She must be happy."
+}
+
+],
+
+hard: [
+
+{
+q:"Sarah didn't answer the phone. I'm almost certain she was sleeping.",
+h:"must have",
+a:"Sarah must have been sleeping."
+},
+
+{
+q:"Tom isn't here. Maybe he has already left.",
+h:"might have",
+a:"Tom might have already left."
+},
+
+{
+q:"This can't be Peter's car. I'm certain it belongs to someone else.",
+h:"can't",
+a:"This can't be Peter's car."
+},
+
+{
+q:"They arrived much later than expected. I'm almost certain they got stuck in traffic.",
+h:"must have",
+a:"They must have got stuck in traffic."
+},
+
+{
+q:"She knows exactly what happened. I'm almost certain someone told her.",
+h:"must have",
+a:"Someone must have told her."
+},
+
+{
+q:"He hasn't replied to any messages. Maybe he lost his phone.",
+h:"might have",
+a:"He might have lost his phone."
+},
+
+{
+q:"The office is completely empty. I'm certain everyone has gone home.",
+h:"must have",
+a:"Everyone must have gone home."
+},
+
+{
+q:"He looks exhausted. I'm almost certain he has been working all night.",
+h:"must have",
+a:"He must have been working all night."
+},
+
+{
+q:"She didn't recognize the place. Maybe she had never been there before.",
+h:"might not have",
+a:"She might not have been there before."
+},
+
+{
+q:"The computer won't turn on. I'm certain the battery is dead.",
+h:"must",
+a:"The battery must be dead."
+},
+
+{
+q:"Nobody answered the door. Maybe they were out.",
+h:"might have",
+a:"They might have been out."
+},
+
+{
+q:"He speaks German fluently. I'm almost certain he lived in Germany.",
+h:"must have",
+a:"He must have lived in Germany."
+},
+
+{
+q:"She hasn't eaten anything today. I'm certain she must be hungry.",
+h:"must",
+a:"She must be hungry."
+},
+
+{
+q:"They haven't arrived yet. Maybe they took the wrong road.",
+h:"might have",
+a:"They might have taken the wrong road."
+},
+
+{
+q:"He knew the answer immediately. I'm almost certain he had seen the question before.",
+h:"must have",
+a:"He must have seen the question before."
+},
+
+{
+q:"She isn't answering the door. I'm certain she isn't at home.",
+h:"can't",
+a:"She can't be at home."
+},
+
+{
+q:"The floor is covered in water. Maybe someone left the tap running.",
+h:"might have",
+a:"Someone might have left the tap running."
+},
+
+{
+q:"He is wearing his football boots. I'm almost certain he is going to training.",
+h:"must",
+a:"He must be going to training."
+},
+
+{
+q:"They didn't hear us. Maybe they were listening to music.",
+h:"might have",
+a:"They might have been listening to music."
+},
+
+{
+q:"She got the highest score. I'm almost certain she studied very hard.",
+h:"must have",
+a:"She must have studied very hard."
+},
+
+{
+q:"The door is locked. Maybe nobody is inside.",
+h:"might",
+a:"Nobody might be inside."
+},
+
+{
+q:"He hasn't arrived yet. I'm almost certain he has missed the train.",
+h:"must have",
+a:"He must have missed the train."
+},
+
+{
+q:"She is not answering her phone. Maybe she is driving.",
+h:"might",
+a:"She might be driving."
+},
+
+{
+q:"They have bought a lot of food. I'm almost certain they are having a party.",
+h:"must",
+a:"They must be having a party."
+},
+
+{
+q:"He looks surprised. Maybe he didn't know about the plan.",
+h:"might not have",
+a:"He might not have known about the plan."
+},
+
+{
+q:"The lights are off and the door is locked. I'm certain nobody is home.",
+h:"can't",
+a:"Nobody can be home."
+},
+
+{
+q:"She knows all the details. I'm almost certain she was there.",
+h:"must have",
+a:"She must have been there."
+},
+
+{
+q:"He didn't come to work. Maybe he wasn't feeling well.",
+h:"might not have",
+a:"He might not have been feeling well."
+},
+
+{
+q:"The ground is completely dry. It can't have rained recently.",
+h:"can't have",
+a:"It can't have rained recently."
+},
+
+{
+q:"He is extremely tired. I'm almost certain he didn't sleep last night.",
+h:"must have",
+a:"He must not have slept last night."
+},
+
+{
+q:"She is carrying a suitcase. Maybe she is going on holiday.",
+h:"might",
+a:"She might be going on holiday."
+},
+
+{
+q:"They know the restaurant very well. I'm almost certain they've eaten there many times.",
+h:"must have",
+a:"They must have eaten there many times."
+},
+
+{
+q:"The package isn't here. Maybe the delivery driver left it somewhere else.",
+h:"might have",
+a:"The delivery driver might have left it somewhere else."
+},
+
+{
+q:"He isn't answering the phone. I'm certain he isn't in the office.",
+h:"can't",
+a:"He can't be in the office."
+},
+
+{
+q:"She looks nervous. I'm almost certain she is waiting for an important result.",
+h:"must",
+a:"She must be waiting for an important result."
+},
+
+{
+q:"They missed the beginning of the film. Maybe they arrived late.",
+h:"might have",
+a:"They might have arrived late."
+},
+
+{
+q:"He knows how to fix this machine. I'm almost certain he has worked with it before.",
+h:"must have",
+a:"He must have worked with it before."
+},
+
+{
+q:"She hasn't opened the message. Maybe she hasn't seen it.",
+h:"might not have",
+a:"She might not have seen it."
+},
+
+{
+q:"The window is open and the room is cold. I'm almost certain someone left it open.",
+h:"must have",
+a:"Someone must have left it open."
+},
+
+{
+q:"He has no idea where she is. Maybe she didn't tell him.",
+h:"might not have",
+a:"She might not have told him."
+},
+
+{
+q:"The restaurant is full. I'm almost certain the food is good.",
+h:"must",
+a:"The food must be good."
+},
+
+{
+q:"She hasn't come downstairs. Maybe she is still getting ready.",
+h:"might",
+a:"She might still be getting ready."
+},
+
+{
+q:"They aren't picking up the phone. I'm almost certain they are busy.",
+h:"must",
+a:"They must be busy."
+},
+
+{
+q:"He got home very late. Maybe he had to work overtime.",
+h:"might have",
+a:"He might have had to work overtime."
+},
+
+{
+q:"She knows exactly where the keys are. I'm almost certain she put them there.",
+h:"must have",
+a:"She must have put them there."
+},
+
+{
+q:"The streets are completely dry. I'm certain it hasn't rained today.",
+h:"can't have",
+a:"It can't have rained today."
+},
+
+{
+q:"He isn't at the party. Maybe he decided not to come.",
+h:"might have",
+a:"He might have decided not to come."
+},
+
+{
+q:"She is extremely confident. I'm almost certain she knows the answer.",
+h:"must",
+a:"She must know the answer."
+},
+
+{
+q:"They are covered in mud. I'm almost certain they have been playing outside.",
+h:"must have",
+a:"They must have been playing outside."
+}
+
+]
+
+};
+
+
+/* =========================================================
+   ZMIENNE
+========================================================= */
+
+let selectedDifficulty = "easy";
+let selectedCount = 1;
+let showHints = true;
+
+let quizQuestions = [];
+let currentQuestion = 0;
+let score = 0;
+
+let results = [];
+
+
+/* =========================================================
+   ELEMENTY
+========================================================= */
+
+const menuScreen = document.getElementById("menuScreen");
+const quizScreen = document.getElementById("quizScreen");
+const resultsScreen = document.getElementById("resultsScreen");
+
+const startBtn = document.getElementById("startBtn");
+
+const questionCounter = document.getElementById("questionCounter");
+const questionNumber = document.getElementById("questionNumber");
+const questionText = document.getElementById("questionText");
+
+const answerInput = document.getElementById("answerInput");
+
+const scoreDisplay = document.getElementById("scoreDisplay");
+const progressBar = document.getElementById("progressBar");
+
+const hintBox = document.getElementById("hintBox");
+const hintBtn = document.getElementById("hintBtn");
+const hintSwitch = document.getElementById("hintSwitch");
+
+const checkBtn = document.getElementById("checkBtn");
+const nextBtn = document.getElementById("nextBtn");
+
+const feedback = document.getElementById("feedback");
+const feedbackTitle = document.getElementById("feedbackTitle");
+const feedbackAnswer = document.getElementById("feedbackAnswer");
+
+const resultScore = document.getElementById("resultScore");
+const resultPercent = document.getElementById("resultPercent");
+const reviewList = document.getElementById("reviewList");
+
+const againBtn = document.getElementById("againBtn");
+const menuBtn = document.getElementById("menuBtn");
+
+
+/* =========================================================
+   WYBÓR POZIOMU
+========================================================= */
+
+document.querySelectorAll("[data-difficulty]").forEach(button => {
+
+    button.addEventListener("click", () => {
+
+        document
+            .querySelectorAll("[data-difficulty]")
+            .forEach(btn => btn.classList.remove("active"));
+
+        button.classList.add("active");
+
+        selectedDifficulty = button.dataset.difficulty;
+
+    });
+
+});
+
+
+/* =========================================================
+   WYBÓR LICZBY PYTAŃ
+========================================================= */
+
+document.querySelectorAll("[data-count]").forEach(button => {
+
+    button.addEventListener("click", () => {
+
+        document
+            .querySelectorAll("[data-count]")
+            .forEach(btn => btn.classList.remove("active"));
+
+        button.classList.add("active");
+
+        selectedCount = Number(button.dataset.count);
+
+    });
+
+});
+
+
+/* =========================================================
+   PODPOWIEDŹ W MENU
+========================================================= */
+
+hintSwitch.addEventListener("click", () => {
+
+    showHints = !showHints;
+
+    hintSwitch.classList.toggle("active", showHints);
+
+});
+
+
+/* =========================================================
+   START QUIZU
+========================================================= */
+
+startBtn.addEventListener("click", startQuiz);
+
+function startQuiz() {
+
+    const pool = questions[selectedDifficulty];
+
+    if (!pool || pool.length === 0) {
+
+        alert("Brak pytań dla tego poziomu. Wklej najpierw swoją bazę pytań.");
+
+        return;
+    }
+
+    const shuffled = [...pool].sort(() => Math.random() - 0.5);
+
+    if (selectedCount === 1) {
+
+        quizQuestions = [shuffled[0]];
+
+    } else {
+
+        quizQuestions = shuffled.slice(
+            0,
+            Math.min(selectedCount, shuffled.length)
+        );
+
+    }
+
+    currentQuestion = 0;
+    score = 0;
+    results = [];
+
+
+    /*
+       NAJWAŻNIEJSZE:
+       MENU ZNIKA CAŁKOWICIE.
+    */
+
+    menuScreen.classList.add("hidden");
+
+    resultsScreen.classList.add("hidden");
+
+    quizScreen.classList.remove("hidden");
+
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+
+    loadQuestion();
+
+}
+
+
+/* =========================================================
+   WCZYTANIE PYTANIA
+========================================================= */
+
+function loadQuestion() {
+
+    const q = quizQuestions[currentQuestion];
+
+    answerInput.value = "";
+
+    answerInput.disabled = false;
+
+    questionCounter.textContent =
+        `Pytanie ${currentQuestion + 1} z ${quizQuestions.length}`;
+
+    questionNumber.textContent =
+        `Pytanie ${String(currentQuestion + 1).padStart(2, "0")}`;
+
+    questionText.textContent = q.q;
+
+    scoreDisplay.textContent =
+        `Wynik: ${score}`;
+
+    const progress =
+        ((currentQuestion) / quizQuestions.length) * 100;
+
+    progressBar.style.width = `${progress}%`;
+
+
+    /* PODPOWIEDŹ */
+
+    hintBox.textContent = q.h || "Brak podpowiedzi.";
+
+    hintBox.classList.remove("visible");
+
+    if (showHints) {
+
+        hintBtn.classList.remove("hidden");
+
+    } else {
+
+        hintBtn.classList.add("hidden");
+
+    }
+
+
+    /* FEEDBACK */
+
+    feedback.className = "feedback";
+
+    feedbackTitle.textContent = "";
+
+    feedbackAnswer.textContent = "";
+
+
+    checkBtn.classList.remove("hidden");
+
+    nextBtn.classList.add("hidden");
+
+}
+
+
+/* =========================================================
+   PODPOWIEDŹ
+========================================================= */
+
+hintBtn.addEventListener("click", () => {
+
+    hintBox.classList.toggle("visible");
+
+    if (hintBox.classList.contains("visible")) {
+
+        hintBtn.textContent = "Ukryj podpowiedź";
+
+    } else {
+
+        hintBtn.textContent = "Pokaż podpowiedź";
+
+    }
+
+});
+
+
+/* =========================================================
+   NORMALIZACJA
+========================================================= */
+
+function normalize(text) {
+
+    return text
+        .toLowerCase()
+        .trim()
+        .replace(/[.,!?;:"]/g, "")
+        .replace(/\s+/g, " ");
+
+}
+
+
+/* =========================================================
+   SPRAWDZANIE
+========================================================= */
+
+checkBtn.addEventListener("click", checkAnswer);
+
+function checkAnswer() {
+
+    const q = quizQuestions[currentQuestion];
+
+    const userAnswer = answerInput.value.trim();
+
+    if (!userAnswer) {
+
+        alert("Najpierw wpisz odpowiedź.");
+
+        return;
+    }
+
+    const normalizedUser = normalize(userAnswer);
+
+    const correctAnswers = Array.isArray(q.a)
+        ? q.a
+        : [q.a];
+
+    const isCorrect = correctAnswers.some(answer =>
+        normalize(answer) === normalizedUser
+    );
+
+
+    if (isCorrect) {
+
+        score++;
+
+        feedback.className = "feedback correct";
+
+        feedbackTitle.textContent = "✓ Poprawna odpowiedź";
+
+        feedbackAnswer.innerHTML =
+            `<strong>Twoja odpowiedź:</strong> ${escapeHTML(userAnswer)}`;
+
+    } else {
+
+        feedback.className = "feedback incorrect";
+
+        feedbackTitle.textContent = "✕ Niepoprawna odpowiedź";
+
+        feedbackAnswer.innerHTML =
+            `<strong>Twoja odpowiedź:</strong> ${escapeHTML(userAnswer)}
+            <br>
+            <strong>Poprawna odpowiedź:</strong> ${escapeHTML(correctAnswers[0])}`;
+
+    }
+
+
+    results.push({
+
+        question: q.q,
+
+        userAnswer: userAnswer,
+
+        correctAnswer: correctAnswers[0],
+
+        correct: isCorrect
+
+    });
+
+
+    answerInput.disabled = true;
+
+    checkBtn.classList.add("hidden");
+
+    nextBtn.classList.remove("hidden");
+
+    scoreDisplay.textContent =
+        `Wynik: ${score}`;
+
+}
+
+
+/* =========================================================
+   NASTĘPNE PYTANIE
+========================================================= */
+
+nextBtn.addEventListener("click", nextQuestion);
+
+function nextQuestion() {
+
+    currentQuestion++;
+
+    if (currentQuestion >= quizQuestions.length) {
+
+        showResults();
+
+        return;
+    }
+
+    loadQuestion();
+
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+
+}
+
+
+/* =========================================================
+   WYNIKI
+========================================================= */
+
+function showResults() {
+
+    quizScreen.classList.add("hidden");
+
+    menuScreen.classList.add("hidden");
+
+    resultsScreen.classList.remove("hidden");
+
+    progressBar.style.width = "100%";
+
+    resultScore.textContent =
+        `${score} / ${quizQuestions.length}`;
+
+    const percentage =
+        Math.round((score / quizQuestions.length) * 100);
+
+    resultPercent.textContent =
+        `${percentage}% poprawnych odpowiedzi`;
+
+
+    reviewList.innerHTML = "";
+
+
+    results.forEach((result, index) => {
+
+        const item = document.createElement("div");
+
+        item.className = "review-item";
+
+        item.innerHTML = `
+
+            <div class="review-question">
+                ${index + 1}. ${escapeHTML(result.question)}
+            </div>
+
+            <div class="review-row">
+                <span class="review-label">Twoja odpowiedź:</span>
+                <span class="${result.correct ? "correct-text" : "incorrect-text"}">
+                    ${escapeHTML(result.userAnswer)}
+                </span>
+            </div>
+
+            <div class="review-row">
+                <span class="review-label">Poprawna odpowiedź:</span>
+                <span class="correct-text">
+                    ${escapeHTML(result.correctAnswer)}
+                </span>
+            </div>
+
+        `;
+
+        reviewList.appendChild(item);
+
+    });
+
+}
+
+
+/* =========================================================
+   ZAGRAJ PONOWNIE
+========================================================= */
+
+againBtn.addEventListener("click", () => {
+
+    resultsScreen.classList.add("hidden");
+
+    startQuiz();
+
+});
+
+
+/* =========================================================
+   MENU GŁÓWNE
+========================================================= */
+
+menuBtn.addEventListener("click", () => {
+
+    quizScreen.classList.add("hidden");
+
+    resultsScreen.classList.add("hidden");
+
+    menuScreen.classList.remove("hidden");
+
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+
+});
+
+
+/* =========================================================
+   ESCAPE HTML
+========================================================= */
+
+function escapeHTML(text) {
+
+    return String(text)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+}
+
+
+/* =========================================================
+   CTRL + ENTER
+========================================================= */
+
+answerInput.addEventListener("keydown", event => {
+
+    if (event.ctrlKey && event.key === "Enter") {
+
+        if (!checkBtn.classList.contains("hidden")) {
+
+            checkAnswer();
+
+        } else {
+
+            nextQuestion();
+
+        }
+
+    }
+
+});
+
+</script>
 
 </body>
 </html>
