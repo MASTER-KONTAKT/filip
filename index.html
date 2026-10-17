@@ -282,64 +282,129 @@
     </main>
 
     <script>
-        const VOCABULARY = [
-            // 1. Podróże (Travel)
-            { en: "airport", pl: "lotnisko", category: "Podróże" },
-            { en: "passport", pl: "paszport", category: "Podróże" },
-            { en: "luggage", pl: "bagaż", category: "Podróże" },
-            { en: "boarding pass", pl: "karta pokładowa", category: "Podróże" },
-            { en: "ticket", pl: "bilet", category: "Podróże" },
-            { en: "destination", pl: "cel podróży", category: "Podróże" },
-            { en: "hotel", pl: "hotel", category: "Podróże" },
-            { en: "flight", pl: "lot", category: "Podróże" },
+       const VOCABULARY = [
+    // 1. International Trade (p.72)
+    { en: "bad weather", pl: "zła pogoda", category: "International Trade" },
+    { en: "expensive", pl: "drogi", category: "International Trade" },
+    { en: "factory", pl: "fabryka", category: "International Trade" },
+    { en: "increase", pl: "wzrost; zwiększać", category: "International Trade" },
+    { en: "oil", pl: "ropa naftowa", category: "International Trade" },
+    { en: "price", pl: "cena", category: "International Trade" },
+    { en: "reduce", pl: "zmniejszać; ograniczać", category: "International Trade" },
+    { en: "West Africa", pl: "Afryka Zachodnia", category: "International Trade" },
+    { en: "Cheers, mate!", pl: "Dzięki, przyjacielu!", category: "International Trade" },
+    { en: "For sure.", pl: "Na pewno.", category: "International Trade" },
+    { en: "Hands off!", pl: "Nie ruszaj tego!", category: "International Trade" },
+    { en: "I get the picture.", pl: "Rozumiem.", category: "International Trade" },
+    { en: "What a rip-off!", pl: "Co za zdzierstwo!", category: "International Trade" },
+    { en: "consumer", pl: "konsument", category: "International Trade" },
+    { en: "demand", pl: "popyt", category: "International Trade" },
+    { en: "distribution", pl: "dystrybucja", category: "International Trade" },
+    { en: "export", pl: "eksportować", category: "International Trade" },
+    { en: "goods", pl: "towary", category: "International Trade" },
+    { en: "import", pl: "importować", category: "International Trade" },
+    { en: "manufacturing", pl: "produkcja przemysłowa", category: "International Trade" },
+    { en: "market", pl: "rynek", category: "International Trade" },
+    { en: "package", pl: "pakować", category: "International Trade" },
+    { en: "production", pl: "produkcja", category: "International Trade" },
+    { en: "retail", pl: "sprzedaż detaliczna", category: "International Trade" },
+    { en: "retailer", pl: "sprzedawca detaliczny", category: "International Trade" },
+    { en: "stock", pl: "towar; zapas; asortyment", category: "International Trade" },
+    { en: "supply", pl: "podaż; zapas", category: "International Trade" },
+    { en: "trade", pl: "handel", category: "International Trade" },
 
-            // 2. Praca (Work)
-            { en: "meeting", pl: "spotkanie", category: "Praca" },
-            { en: "contract", pl: "umowa", category: "Praca" },
-            { en: "deadline", pl: "ostateczny termin", category: "Praca" },
-            { en: "salary", pl: "pensja", category: "Praca" },
-            { en: "employee", pl: "pracownik", category: "Praca" },
-            { en: "employer", pl: "pracodawca", category: "Praca" },
-            { en: "office", pl: "biuro", category: "Praca" },
+    // 2. The Silk Road (p.75)
+    { en: "benefit", pl: "korzyść", category: "The Silk Road" },
+    { en: "cause and effect", pl: "przyczyna i skutek", category: "The Silk Road" },
+    { en: "change", pl: "zmieniać; zmiana", category: "The Silk Road" },
+    { en: "consequence", pl: "konsekwencja; następstwo", category: "The Silk Road" },
+    { en: "contribute", pl: "przyczyniać się", category: "The Silk Road" },
+    { en: "development", pl: "rozwój", category: "The Silk Road" },
+    { en: "expand", pl: "powiększać się; rozszerzać", category: "The Silk Road" },
+    { en: "growth", pl: "wzrost", category: "The Silk Road" },
+    { en: "influence", pl: "wpływ; wpływać", category: "The Silk Road" },
+    { en: "raise", pl: "podnosić; podwyższać", category: "The Silk Road" },
 
-            // 3. Codzienność (Daily Life)
-            { en: "schedule", pl: "harmonogram", category: "Codzienność" },
-            { en: "routine", pl: "rutyna", category: "Codzienność" },
-            { en: "habit", pl: "nawyk", category: "Codzienność" },
-            { en: "shopping", pl: "zakupy", category: "Codzienność" },
-            { en: "cleaning", pl: "sprzątanie", category: "Codzienność" },
-            { en: "walk", pl: "spacer", category: "Codzienność" },
+    // 3. Saving Up (p.76)
+    { en: "ATM", pl: "bankomat", category: "Saving Up" },
+    { en: "bank statement", pl: "wyciąg bankowy", category: "Saving Up" },
+    { en: "credit", pl: "uznanie konta; zwiększenie salda", category: "Saving Up" },
+    { en: "debt", pl: "dług", category: "Saving Up" },
+    { en: "interest rate", pl: "oprocentowanie", category: "Saving Up" },
+    { en: "lender", pl: "pożyczkodawca", category: "Saving Up" },
+    { en: "loan", pl: "pożyczka", category: "Saving Up" },
+    { en: "make a deposit", pl: "dokonać wpłaty", category: "Saving Up" },
+    { en: "payment", pl: "płatność", category: "Saving Up" },
+    { en: "savings goal", pl: "cel oszczędnościowy", category: "Saving Up" },
+    { en: "tax", pl: "podatek", category: "Saving Up" },
+    { en: "wage", pl: "płaca; wynagrodzenie", category: "Saving Up" },
+    { en: "withdraw cash", pl: "wypłacić gotówkę", category: "Saving Up" },
 
-            // 4. Jedzenie (Food)
-            { en: "breakfast", pl: "śniadanie", category: "Jedzenie" },
-            { en: "lunch", pl: "obiad", category: "Jedzenie" },
-            { en: "dinner", pl: "kolacja", category: "Jedzenie" },
-            { en: "delicious", pl: "pyszny", category: "Jedzenie" },
-            { en: "recipe", pl: "przepis", category: "Jedzenie" },
-            { en: "ingredients", pl: "składniki", category: "Jedzenie" },
+    // 4. The Cashless Society (p.78)
+    { en: "banknote", pl: "banknot", category: "The Cashless Society" },
+    { en: "change", pl: "drobne; reszta", category: "The Cashless Society" },
+    { en: "coin", pl: "moneta", category: "The Cashless Society" },
+    { en: "contactless payment", pl: "płatność zbliżeniowa", category: "The Cashless Society" },
+    { en: "electronic banking", pl: "bankowość elektroniczna", category: "The Cashless Society" },
+    { en: "go bankrupt", pl: "zbankrutować", category: "The Cashless Society" },
+    { en: "hand over", pl: "wręczać; przekazywać", category: "The Cashless Society" },
+    { en: "tap", pl: "stukać; przyłożyć (kartę)", category: "The Cashless Society" },
 
-            // 5. Technologia (Technology)
-            { en: "computer", pl: "komputer", category: "Technologia" },
-            { en: "software", pl: "oprogramowanie", category: "Technologia" },
-            { en: "database", pl: "baza danych", category: "Technologia" },
-            { en: "network", pl: "sieć", category: "Technologia" },
-            { en: "screen", pl: "ekran", category: "Technologia" },
-            { en: "keyboard", pl: "klawiatura", category: "Technologia" },
+    // 5. Global Consumers, Global Citizens? (p.80)
+    { en: "animal rights", pl: "prawa zwierząt", category: "Global Consumers" },
+    { en: "child labour", pl: "praca dzieci; zatrudnianie dzieci", category: "Global Consumers" },
+    { en: "environmental impact", pl: "wpływ na środowisko", category: "Global Consumers" },
+    { en: "fair trade", pl: "sprawiedliwy handel", category: "Global Consumers" },
+    { en: "greenhouse gas", pl: "gaz cieplarniany", category: "Global Consumers" },
+    { en: "plant-based diet", pl: "dieta roślinna", category: "Global Consumers" },
+    { en: "reduce consumption", pl: "ograniczać spożycie; zmniejszać konsumpcję", category: "Global Consumers" },
+    { en: "working conditions", pl: "warunki pracy", category: "Global Consumers" },
 
-            // 6. Emocje (Emotions)
-            { en: "happy", pl: "szczęśliwy", category: "Emocje" },
-            { en: "excited", pl: "podekscytowany", category: "Emocje" },
-            { en: "tired", pl: "zmęczony", category: "Emocje" },
-            { en: "surprised", pl: "zaskoczony", category: "Emocje" },
-            { en: "angry", pl: "zły", category: "Emocje" },
+    // 6. Economics, Finance; Other Types of Services (p.84)
+    { en: "economic growth", pl: "wzrost gospodarczy", category: "Economics and Finance" },
+    { en: "free trade", pl: "wolny handel", category: "Economics and Finance" },
+    { en: "gig economy", pl: "gospodarka oparta na krótkoterminowych zleceniach", category: "Economics and Finance" },
+    { en: "globalisation", pl: "globalizacja", category: "Economics and Finance" },
+    { en: "recession", pl: "recesja", category: "Economics and Finance" },
+    { en: "stock market", pl: "giełda papierów wartościowych", category: "Economics and Finance" },
+    { en: "warehouse", pl: "magazyn", category: "Economics and Finance" },
+    { en: "bargain", pl: "okazja; korzystny zakup", category: "Economics and Finance" },
+    { en: "borrow", pl: "pożyczać od kogoś", category: "Economics and Finance" },
+    { en: "income tax", pl: "podatek dochodowy", category: "Economics and Finance" },
+    { en: "investment", pl: "inwestycja", category: "Economics and Finance" },
+    { en: "lend", pl: "pożyczać komuś", category: "Economics and Finance" },
+    { en: "owe", pl: "być winnym; być dłużnym", category: "Economics and Finance" },
+    { en: "accountant", pl: "księgowy", category: "Other Services" },
+    { en: "buy insurance", pl: "wykupić ubezpieczenie", category: "Other Services" },
+    { en: "careers advisor", pl: "doradca zawodowy", category: "Other Services" },
+    { en: "financial services", pl: "usługi finansowe", category: "Other Services" },
+    { en: "internet provider", pl: "dostawca internetu", category: "Other Services" },
+    { en: "trade union", pl: "związek zawodowy", category: "Other Services" },
 
-            // 7. Dom (Home)
-            { en: "kitchen", pl: "kuchnia", category: "Dom" },
-            { en: "bedroom", pl: "sypialnia", category: "Dom" },
-            { en: "living room", pl: "salon", category: "Dom" },
-            { en: "furniture", pl: "meble", category: "Dom" },
-            { en: "window", pl: "okno", category: "Dom" }
-        ];
+    // 7. Types of Shops (p.140)
+    { en: "antique shop", pl: "sklep z antykami", category: "Types of Shops" },
+    { en: "beauty salon", pl: "salon piękności", category: "Types of Shops" },
+    { en: "boutique clothes shop", pl: "butik z ubraniami", category: "Types of Shops" },
+    { en: "deli", pl: "delikatesy", category: "Types of Shops" },
+    { en: "florist's", pl: "kwiaciarnia", category: "Types of Shops" },
+    { en: "hardware shop", pl: "sklep z narzędziami i artykułami budowlanymi", category: "Types of Shops" },
+
+    // 8. Products and Their Features (p.140)
+    { en: "branded", pl: "markowy", category: "Products and Features" },
+    { en: "custom-made", pl: "wykonany na zamówienie", category: "Products and Features" },
+    { en: "disposable", pl: "jednorazowy", category: "Products and Features" },
+    { en: "handmade", pl: "wykonany ręcznie", category: "Products and Features" },
+    { en: "off-the-shelf", pl: "dostępny od ręki; gotowy", category: "Products and Features" },
+    { en: "returnable", pl: "podlegający zwrotowi", category: "Products and Features" },
+
+    // 9. Special Offers and Advertising (p.140)
+    { en: "client base", pl: "baza klientów", category: "Advertising" },
+    { en: "commercial", pl: "reklama; reklamowy", category: "Advertising" },
+    { en: "market research", pl: "badanie rynku", category: "Advertising" },
+    { en: "product placement", pl: "lokowanie produktu", category: "Advertising" },
+    { en: "USP", pl: "unikalna cecha oferty", category: "Advertising" },
+    { en: "viral marketing", pl: "marketing wirusowy", category: "Advertising" }
+];
 
         let currentTab = 'dictionary';
         let flashcardDirection = 'pl-en';
