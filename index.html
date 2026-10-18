@@ -11,6 +11,17 @@
         .transform-style-3d { transform-style: preserve-3d; }
         .backface-hidden { backface-visibility: hidden; }
         .rotate-y-180 { transform: rotateY(180deg); }
+        html { -webkit-text-size-adjust: 100%; }
+        body { overflow-x: hidden; }
+        #quiz-target-word { overflow-wrap: anywhere; }
+        #quiz-results table { min-width: 560px; }
+        @media (max-width: 640px) {
+            #quiz-box, #quiz-results { padding: 1rem; border-radius: 1rem; }
+            #quiz-target-word { font-size: clamp(1.5rem, 7vw, 2.25rem); }
+            #quiz-results .quiz-result-actions { flex-direction: column; }
+            #quiz-results .quiz-result-actions button { width: 100%; }
+            #quiz-results th, #quiz-results td { padding: .65rem; }
+        }
     </style>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col font-sans">
@@ -229,7 +240,7 @@
 
                     <!-- Typing Mode Input -->
                     <div id="quiz-typing-container" class="hidden my-6 space-y-3">
-                      <input type="text" id="quiz-type-input" placeholder="Wpisz tłumaczenie..." onkeydown="if(event.key==='Enter'){event.preventDefault(); if(quizAnswered){nextQuizQuestion()}else{submitQuizTypingAnswer()}}" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-lg text-white focus:outline-none focus:border-indigo-500">
+                        <input type="text" id="quiz-type-input" placeholder="Wpisz tłumaczenie..." onkeydown="if(event.key==='Enter'){event.preventDefault(); if(quizAnswered){nextQuizQuestion()}else{submitQuizTypingAnswer()}}" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-lg text-white focus:outline-none focus:border-indigo-500">
                         <button id="quiz-type-submit-btn" onclick="submitQuizTypingAnswer()" class="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition">
                             Sprawdź odpowiedź
                         </button>
@@ -266,11 +277,14 @@
                         </table>
                     </div>
 
-                    <div class="flex gap-4">
-                        <button onclick="resetQuiz()" class="flex-1 py-3.5 bg-slate-700 hover:bg-slate-600 text-slate-200 font-bold rounded-xl transition">
+                    <div class="quiz-result-actions flex flex-col sm:flex-row gap-3 sm:gap-4">
+                        <button id="quiz-wrong-btn" onclick="startWrongAnswersQuiz()" class="hidden w-full sm:flex-1 py-3.5 bg-rose-600 hover:bg-rose-500 text-white font-bold rounded-xl transition items-center justify-center gap-2">
+                            <i class="fas fa-rotate-right"></i> Zrób quiz z błędnych odpowiedzi
+                        </button>
+                        <button onclick="resetQuiz()" class="w-full sm:flex-1 py-3.5 bg-slate-700 hover:bg-slate-600 text-slate-200 font-bold rounded-xl transition">
                             Powrót do menu
                         </button>
-                        <button onclick="startQuiz()" class="flex-1 py-3.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition">
+                        <button onclick="startQuiz()" class="w-full sm:flex-1 py-3.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition">
                             Spróbuj ponownie
                         </button>
                     </div>
@@ -805,6 +819,8 @@
                 typeInput.value = '';
                 typeInput.disabled = false;
                 typeInput.readOnly = false;
+                typeInput.classList.remove('border-emerald-500', 'bg-emerald-950/40', 'text-emerald-300', 'border-rose-500', 'bg-rose-950/40', 'text-rose-300');
+                typeInput.classList.add('border-slate-700');
                 typeInput.focus();
                 document.getElementById('quiz-type-submit-btn').classList.remove('hidden');
             }
@@ -855,7 +871,8 @@
                 correctAnswer: targetAnswer,
                 userAnswer: selectedOpt,
                 isCorrect: isCorrect,
-                isTypo: false
+                isTypo: false,
+                word: current
             });
 
             document.getElementById('quiz-score-good').innerText = quizGood;
@@ -909,7 +926,8 @@
                 correctAnswer: targetAnswer,
                 userAnswer: userInput,
                 isCorrect: evalRes.isCorrect,
-                isTypo: evalRes.isTypo
+                isTypo: evalRes.isTypo,
+                word: current
             });
 
             document.getElementById('quiz-score-good').innerText = quizGood;
@@ -938,6 +956,11 @@
             document.getElementById('quiz-final-score').innerText = `${quizGood} / ${total}`;
             document.getElementById('quiz-final-percent').innerText = `Twój wynik: ${percent}%`;
 
+            const wrongItems = quizHistory.filter(item => !item.isCorrect);
+            const wrongBtn = document.getElementById('quiz-wrong-btn');
+            wrongBtn.classList.toggle('hidden', wrongItems.length === 0);
+            wrongBtn.classList.toggle('flex', wrongItems.length > 0);
+
             const tableBody = document.getElementById('quiz-results-table');
             tableBody.innerHTML = quizHistory.map(item => {
                 let statusBg = item.isCorrect 
@@ -961,8 +984,34 @@
             }).join('');
         }
 
+        function startWrongAnswersQuiz() {
+            const wrongWords = quizHistory
+                .filter(item => !item.isCorrect && item.word)
+                .map(item => item.word);
+
+            if (wrongWords.length === 0) {
+                alert('Nie masz błędnych odpowiedzi do powtórzenia.');
+                return;
+            }
+
+            // Usuwamy ewentualne duplikaty, a następnie mieszamy kolejność.
+            quizQuestions = Array.from(new Map(wrongWords.map(word => [`${word.en}|||${word.pl}`, word])).values());
+            quizQuestions.sort(() => Math.random() - 0.5);
+            quizIndex = 0;
+            quizGood = 0;
+            quizBad = 0;
+            quizHistory = [];
+            quizAnswered = false;
+
+            document.getElementById('quiz-results').classList.add('hidden');
+            document.getElementById('quiz-config').classList.add('hidden');
+            document.getElementById('quiz-box').classList.remove('hidden');
+            renderQuizQuestion();
+        }
+
         function resetQuiz() {
             document.getElementById('quiz-results').classList.add('hidden');
+            document.getElementById('quiz-box').classList.add('hidden');
             document.getElementById('quiz-config').classList.remove('hidden');
         }
     </script>
