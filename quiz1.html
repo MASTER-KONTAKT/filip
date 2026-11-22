@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz 1: Relative Clauses — English Lab</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-quiz-type="relative">
+  <div class="bg-decoration" aria-hidden="true">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+  </div>
+
+  <header class="top-bar">
+    <div class="container top-bar-inner">
+      <a href="index.html" class="brand">
+        <span class="brand-logo">EL</span>
+        <span class="brand-name">English Lab</span>
+      </a>
+      <a href="index.html#quizy" class="back-link">← Wszystkie quizy</a>
+    </div>
+  </header>
+
+  <main class="container main-content quiz-container">
+    <!-- EKRAN 1: KONFIGURACJA -->
+    <section id="setup-screen" class="quiz-card fade-in">
+      <div class="quiz-header-meta">
+        <span class="tile-badge">Quiz 1</span>
+        <span class="meta-topic">Zdania przydawkowe</span>
+      </div>
+      <h1>Relative Clauses</h1>
+      <p class="quiz-intro">
+        Przećwicz zaimki <em>who, which, that, whose, where, when</em>, zdania definiujące i niedefiniujące, pomijanie zaimków oraz konstrukcje z przyimkami. Wpisuj pełne odpowiedzi samodzielnie.
+      </p>
+
+      <div class="config-group">
+        <label class="config-label">Poziom trudności</label>
+        <div class="option-pills" id="difficulty-options" role="radiogroup" aria-label="Poziom trudności">
+          <button type="button" class="pill-btn active" data-value="easy">Łatwy</button>
+          <button type="button" class="pill-btn" data-value="medium">Średni</button>
+          <button type="button" class="pill-btn" data-value="hard">Trudny</button>
+        </div>
+      </div>
+
+      <div class="config-group">
+        <label class="config-label">Liczba pytań</label>
+        <div class="option-pills" id="count-options" role="radiogroup" aria-label="Liczba pytań">
+          <button type="button" class="pill-btn" data-value="5">5</button>
+          <button type="button" class="pill-btn active" data-value="10">10</button>
+          <button type="button" class="pill-btn" data-value="15">15</button>
+          <button type="button" class="pill-btn" data-value="20">20</button>
+        </div>
+      </div>
+
+      <div class="config-actions">
+        <button type="button" id="start-quiz-btn" class="btn btn-primary btn-full">
+          Rozpocznij quiz
+        </button>
+      </div>
+    </section>
+
+    <!-- EKRAN 2: PYTANIE -->
+    <section id="question-screen" class="quiz-card hidden">
+      <div class="progress-wrapper">
+        <div class="progress-top">
+          <span id="question-counter" class="progress-counter">Pytanie 1 z 10</span>
+          <span id="difficulty-badge" class="progress-diff">Poziom: Łatwy</span>
+        </div>
+        <div class="progress-track">
+          <div id="progress-bar" class="progress-fill" style="width: 10%;"></div>
+        </div>
+      </div>
+
+      <div class="question-body">
+        <span id="task-type-label" class="task-badge">Uzupełnij lukę</span>
+        <h2 id="question-prompt" class="question-prompt">Treść zadania</h2>
+        <p id="question-subtext" class="question-subtext"></p>
+      </div>
+
+      <div class="answer-box">
+        <label for="answer-input" class="sr-only">Twoja odpowiedź</label>
+        <input
+          type="text"
+          id="answer-input"
+          class="text-input"
+          placeholder="Wpisz odpowiedź po angielsku..."
+          autocomplete="off"
+          autocorrect="off"
+          autocapitalize="off"
+          spellcheck="false"
+        >
+        <p id="input-error" class="input-error hidden" role="alert">Wpisz odpowiedź, aby przejść dalej.</p>
+      </div>
+
+      <div class="question-footer">
+        <span class="key-hint">Naciśnij <kbd>Enter</kbd>, aby zatwierdzić</span>
+        <button type="button" id="submit-answer-btn" class="btn btn-primary">
+          Sprawdź i dalej
+        </button>
+      </div>
+    </section>
+
+    <!-- EKRAN 3: WYNIKI -->
+    <section id="results-screen" class="results-wrapper hidden">
+      <div class="quiz-card score-summary">
+        <span class="tile-badge">Podsumowanie</span>
+        <div class="score-display">
+          <div id="score-fraction" class="score-fraction">0/10</div>
+          <div id="score-percent" class="score-percent">0%</div>
+        </div>
+        <h2 id="score-verdict" class="score-verdict">Ocena</h2>
+        <p id="score-description" class="score-description"></p>
+
+        <div class="results-actions">
+          <button type="button" id="retry-btn" class="btn btn-primary">Spróbuj ponownie</button>
+          <a href="index.html" class="btn btn-secondary">Wróć do menu</a>
+        </div>
+      </div>
+
+      <div class="review-section">
+        <h3>Szczegółowy przegląd odpowiedzi</h3>
+        <div id="review-list" class="review-list"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Stałe dolne menu -->
+  <nav class="bottom-nav" aria-label="Nawigacja główna">
+    <div class="bottom-nav-inner">
+      <a href="index.html#start" class="nav-item">
+        <span class="nav-icon" aria-hidden="true">🏠</span>
+        <span class="nav-label">Start</span>
+      </a>
+      <a href="index.html#quizy" class="nav-item active">
+        <span class="nav-icon" aria-hidden="true">▦</span>
+        <span class="nav-label">Quizy</span>
+      </a>
+      <a href="index.html#nauka" class="nav-item">
+        <span class="nav-icon" aria-hidden="true">📖</span>
+        <span class="nav-label">Nauka</span>
+      </a>
+    </div>
+  </nav>
+
+  <script src="quiz.js"></script>
+</body>
+</html>
